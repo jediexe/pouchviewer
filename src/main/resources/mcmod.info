@@ -2,8 +2,8 @@
 {
   "modid": "pouchviewer",
   "name": "LOTR Pouch Viewer",
-  "description": "LOTR mod addon to view pouch contents on hover. By default, it reveals 5 items. Left Shift will reveal all contents. F3+H for advanced tooltips which will display slot numbers. Also removed the "Dyed" text and "Belonged to: name" from all items.",
-  "version": "1.0",
+  "description": "LOTR mod addon to view pouch contents on hover. By default, it reveals 5 items. Left Shift will reveal all contents. F3+H for advanced tooltips which will display slot numbers. Also removed the "Dyed" text and "Belonged to: name" from all items. Made compatible with Dmod and other item storage mods.",
+  "version": "1.2",
   "mcversion": "1.7.10",
   "url": "",
   "updateUrl": "",

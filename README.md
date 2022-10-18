@@ -1,5 +1,5 @@
 # pouchviewer
-This LOTR addon reveals pouch contents by listing the quantity and name of each item in a pouch in the pouch's tooltip.
+This LOTR addon reveals pouch contents by listing the quantity and name of each item in a pouch in the pouch's tooltip. It should also display items for most item container mods.
 
 By default, 5 items are listed in the tooltip. This display resembles the Shulker Box tooltip that was added in later versions, so pouch contents don't overload the screen. default1 default2
 
@@ -11,4 +11,4 @@ Advanced tooltips view also works with reveal all pouch contents. advanced1full 
 
 It also removes the "Dyed" and "Belonged to: name" text from all items to make tooltips less cluttered. dyed belonged
 
-Feel free to use this mod in your modpacks as long as you credit me (jediexe) and link this page. This mod works on client side. Compatible with LOTR legacy mod and LOTR FA legacy mod (tested both). If you find any incompatibilities or bugs, please report them.
+Feel free to use this mod in your modpacks as long as you credit me (jediexe) and link this page. This mod works on client side. Compatible with LOTR legacy mod and LOTR FA legacy mod (tested both). Compatible with Dmod. If you find any incompatibilities or bugs, please report them.

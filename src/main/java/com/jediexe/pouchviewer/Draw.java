@@ -127,6 +127,81 @@ public class Draw {
 	    		}
 			}
     	}
+    	else if(event.itemStack.hasTagCompound() && !event.itemStack.getTagCompound().hasKey("LOTRPouchData") && event.itemStack.getTagCompound().hasKey("Items")){
+    		
+    		NBTTagCompound NBTTagCompound = event.itemStack.getTagCompound();
+    		NBTTagList tagList = NBTTagCompound.getTagList("Items", 10);
+    		
+    		if(tagList.tagCount()>0){
+    			
+    			event.toolTip.add(new String((char) 167 + "9" + "Items"));
+    			
+	    		if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) && tagList.tagCount()>5){
+		    		for (int i = 0; i < tagList.tagCount(); ++i) {
+						NBTTagCompound itemData = tagList.getCompoundTagAt(i);
+						byte slot = itemData.getByte("Slot");
+						if (slot < 0 || slot >= 27) {
+							continue;
+						}
+						if(event.showAdvancedItemTooltips) {
+							if(i<9) {
+								String slotnumber = (char) 167 + "3" + "0" + (i+1) + (char) 167 + "f" + ": x";
+								event.toolTip.add(new String(slotnumber + 
+									ItemStack.loadItemStackFromNBT(itemData).stackSize + " " +
+									ItemStack.loadItemStackFromNBT(itemData).getDisplayName()));
+							}
+							else {
+								String slotnumber = (char) 167 + "3" + (i+1) + (char) 167 + "f" + ": x";
+								event.toolTip.add(new String(slotnumber + 
+									ItemStack.loadItemStackFromNBT(itemData).stackSize + " " +
+									ItemStack.loadItemStackFromNBT(itemData).getDisplayName()));
+							}
+						}
+						else{
+							event.toolTip.add(new String((char) 167 + "f" + "x" + 
+								ItemStack.loadItemStackFromNBT(itemData).stackSize + " " + 
+								ItemStack.loadItemStackFromNBT(itemData).getDisplayName()));
+						}
+		    		}
+	    		}
+	    		else{
+	    			int j=0;
+		    		for (int i = 0; i < tagList.tagCount(); ++i) {
+						NBTTagCompound itemData = tagList.getCompoundTagAt(i);
+						byte slot = itemData.getByte("Slot");
+						if (slot < 0 || slot >= 27) {
+							continue;
+						}
+						j+=1;
+						if(event.showAdvancedItemTooltips && j<=5) {
+							if(i<9) {
+								String slotnumber = (char) 167 + "3" + "0" + (i+1) + (char) 167 + "f" + ": x";
+								event.toolTip.add(new String(slotnumber + 
+									ItemStack.loadItemStackFromNBT(itemData).stackSize + " " +
+									ItemStack.loadItemStackFromNBT(itemData).getDisplayName()));
+							}
+							else {
+								String slotnumber = (char) 167 + "3" + (i+1) + (char) 167 + "f" + ": x";
+								event.toolTip.add(new String(slotnumber + 
+									ItemStack.loadItemStackFromNBT(itemData).stackSize + " " +
+									ItemStack.loadItemStackFromNBT(itemData).getDisplayName()));
+							}
+						}
+						else if(j<=5){
+							event.toolTip.add(new String((char) 167 + "f" + "x" + 
+								ItemStack.loadItemStackFromNBT(itemData).stackSize + " " + 
+								ItemStack.loadItemStackFromNBT(itemData).getDisplayName()));
+						}
+						else {
+							continue;
+						}
+		    		}
+		    		if(tagList.tagCount()-5!=0 && j>5){
+						event.toolTip.add(new String((char) 167 + "o" + "and " + (tagList.tagCount()-5) + " more..."));
+					}
+	    		}
+	    	}
+    	}
 	}
 }
 
