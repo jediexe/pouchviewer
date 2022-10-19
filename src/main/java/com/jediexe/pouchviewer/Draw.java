@@ -22,9 +22,11 @@ public class Draw {
 		//Remove this bit if you want to keep the "§belonged to: name" text in tooltips
 		if(event.toolTip.toString().contains("Belonged to:")){
 			int size = event.toolTip.size();
-			event.toolTip.remove(size-2);
-			event.toolTip.remove(size-3);
-			event.toolTip.remove(size-3);
+			if(size>3) {
+				event.toolTip.remove(size-3);
+				event.toolTip.remove(size-2);
+				event.toolTip.remove(size-3);
+			}
 		}
 		
 		//Removes "dyed" description in tooltip from all items
