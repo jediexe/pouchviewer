@@ -21,13 +21,14 @@ public class Pouchviewer {
 		//Removes "�belonged to: name" description in tooltip from all items
 		//Configurable in pouchviewer.cfg
 		if (!Main.showOwned) {
-			if(event.toolTip.toString().contains("Belonged to:") && !event.itemStack.getDisplayName().contains("Warg")){
+			if(event.toolTip.toString().contains("Belonged to:")){
 				int size = event.toolTip.size();
-				if(size>3) {
-					event.toolTip.remove(size-3);
-					event.toolTip.remove(size-2);
-					event.toolTip.remove(size-3);
+				int z = size-1;
+				while (event.toolTip.toString().contains("Belonged to: ")){
+					event.toolTip.remove(z);
+					z-=1;
 				}
+				event.toolTip.remove(event.toolTip.size()-1);
 			}
 		}
 		
