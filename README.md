@@ -18,6 +18,7 @@ Advanced tooltips view also works with reveal all pouch contents.
 It also removes the "Dyed" and "Belonged to: name" text from all items to make tooltips less cluttered.
 ![2022-10-17_13 51 57](https://user-images.githubusercontent.com/47288669/196300065-a2558801-2050-4d0e-9b35-853ae18dc7b6.png)
 
+Config can be accessed from 'Menu > Mods > LOTR Pouch Viewer > config'
 The 'Items' text can be disabled in the config. The name of items can be moved before/after the quantity in the config. Rarities for specific items can be added in the config. Rarity colors, default item color, slot color, and 'Items' text color can be changed in the config.
 
 Feel free to use this mod in your modpacks as long as you credit me (jediexe) and link this page. This mod works on client side. Compatible with LOTR legacy mod and LOTR FA legacy mod (tested both). Compatible with Dmod. If you find any incompatibilities or bugs, please report them.
