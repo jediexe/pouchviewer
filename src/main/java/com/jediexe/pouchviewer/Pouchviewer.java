@@ -1,34 +1,30 @@
 package com.jediexe.pouchviewer;
 
-import java.util.List;
-
 import org.lwjgl.input.Keyboard;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.*;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.*;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 
 public class Pouchviewer {
 	
 	public static Pouchviewer instance = new Pouchviewer();
 
-	String commonItems = Main.commonItems.toLowerCase();
-	String uncommonItems = Main.uncommonItems.toLowerCase();
-	String rareItems = Main.rareItems.toLowerCase();
-	String epicItems = Main.epicItems.toLowerCase();
-	String legendaryItems = Main.legendaryItems.toLowerCase();
-	String tagItemsColor = Main.tagItemsColor;
-	String slotColor = Main.slotColor;
-	String defaultColor = Main.defaultColor;
-	String commonColor = Main.commonColor;
-	String uncommonColor = Main.uncommonColor;
-	String rareColor = Main.rareColor;
-	String epicColor = Main.epicColor;
-	String legendaryColor = Main.legendaryColor;
+	static String commonItems = Main.commonItems.toLowerCase();
+	static String uncommonItems = Main.uncommonItems.toLowerCase();
+	static String rareItems = Main.rareItems.toLowerCase();
+	static String epicItems = Main.epicItems.toLowerCase();
+	static String legendaryItems = Main.legendaryItems.toLowerCase();
+	static String tagItemsColor = Main.tagItemsColor;
+	static String slotColor = Main.slotColor;
+	static String defaultColor = Main.defaultColor;
+	static String commonColor = Main.commonColor;
+	static String uncommonColor = Main.uncommonColor;
+	static String rareColor = Main.rareColor;
+	static String epicColor = Main.epicColor;
+	static String legendaryColor = Main.legendaryColor;
 	String[] colors = new String[]
 			{"dark_red", "red", "gold", 
 			"yellow", "dark_green", "green", 
@@ -466,6 +462,22 @@ public class Pouchviewer {
 	    		}
 	    	}
     	}
+	}
+	
+	public static void update() {
+		commonItems = Main.commonItems.toLowerCase();
+		uncommonItems = Main.uncommonItems.toLowerCase();
+		rareItems = Main.rareItems.toLowerCase();
+		epicItems = Main.epicItems.toLowerCase();
+		legendaryItems = Main.legendaryItems.toLowerCase();
+		tagItemsColor = Main.tagItemsColor;
+		slotColor = Main.slotColor;
+		defaultColor = Main.defaultColor;
+		commonColor = Main.commonColor;
+		uncommonColor = Main.uncommonColor;
+		rareColor = Main.rareColor;
+		epicColor = Main.epicColor;
+		legendaryColor = Main.legendaryColor;
 	}
 }
 
