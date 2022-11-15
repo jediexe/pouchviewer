@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cpw.mods.fml.client.config.IConfigElement;
+import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -22,18 +23,18 @@ public class Main{
 	
 	public static final String NAME = "LOTR Pouch Viewer";
     public static final String MODID = "pouchviewer";
-    public static final String VERSION = "1.8";
+    public static final String VERSION = "1.9";
     
     public static Configuration config = new Configuration(new File("config/pouchviewer.cfg"));
-    public static List<ConfigCategory> allCategories;
+    public static List<ConfigCategory> Categories;
     
     static { 
-    	allCategories = new ArrayList<>();
+    	Categories = new ArrayList<>();
 	} 
     
     public static String makeCategory(String name) {
-		ConfigCategory category = config.getCategory(name);
-		allCategories.add(category);
+		ConfigCategory c = config.getCategory(name);
+		Categories.add(c);
 		return name;
 	}
     
@@ -41,12 +42,18 @@ public class Main{
     public static String CATEGORY_RARITY = Main.makeCategory("rarity");
 	public static String CATEGORY_RARITYCOLORS = Main.makeCategory("rarity colors");
 	
+	Property plegacyTooltip = config.get(CATEGORY_CONFIG, "legacyTooltip", true, 
+			"NOT ADDED YET: Set to true use the item listing tooltip instead of rendering each item in the pouch");
+	Property pshowSlotNumber = config.get(CATEGORY_CONFIG, "showSlotNumber", true, 
+			"Set to true show the slot number");
 	Property pshowOwned = config.get(CATEGORY_CONFIG, "showOwned", false, 
 			"Set to true to keep the 'Belonged to:' text in the tooltip");
 	Property pshowDyed = config.get("config", "showDyed", false, 
 			"Set to true to keep the 'Dyed' text in the tooltip");
 	Property pnameFirst = config.get(CATEGORY_CONFIG, "nameFirst", true, 
 			"Set to false to make the quantity (x64) appear after the item name in the tooltip");
+	Property pdefaultItemsShown = config.get(CATEGORY_CONFIG, "defaultItemsShown", 5, 
+			"The number of items that will be shown by default in the tooltip");
 	Property paddTagItems = config.get(CATEGORY_CONFIG, "addTagItems", true, 
 			"Set to false to remove the 'Items' line that appears before the listed items in the tooltip");
 	Property penableRarity = config.get(CATEGORY_CONFIG, "enableRarity", true, 
@@ -77,11 +84,14 @@ public class Main{
 			"The default color of epic items. Valid values: dark_red, red, gold, yellow, dark_green, green, aqua, dark_aqua, dark_blue, blue, light_purple, dark_purple, white, gray, dark_gray, black");
 	Property plegendaryColor = config.get(CATEGORY_RARITYCOLORS, "5. legendaryColor", "gold", 
 			"The default color of legendary items. Valid values: dark_red, red, gold, yellow, dark_green, green, aqua, dark_aqua, dark_blue, blue, light_purple, dark_purple, white, gray, dark_gray, black");
-    public static boolean showOwned;
+	public static boolean legacyTooltip;
+	public static boolean showSlotNumber;
+	public static boolean showOwned;
     public static boolean showDyed;
     public static boolean nameFirst;
-    public static boolean enableRarity;
     public static boolean addTagItems;
+    public static boolean enableRarity;
+    public static int defaultItemsShown;
     public static String commonItems;
     public static String uncommonItems;
     public static String rareItems;
@@ -98,15 +108,21 @@ public class Main{
     
     public static List<IConfigElement> getConfigElements() {
 		ArrayList<IConfigElement> list = new ArrayList<>();
-		for (ConfigCategory category : allCategories) {
-			ConfigElement categoryElement = new ConfigElement(category);
-			list.add(categoryElement);
+		for (ConfigCategory c : Categories) {
+			ConfigElement ce = new ConfigElement(c);
+			list.add(ce);
 		}
 		return list;
 	}
     
     public static void load(Configuration config) {
     	//Config options
+    	Property plegacyTooltip = config.get(CATEGORY_CONFIG, "legacyTooltip", true, 
+    			"NOT ADDED YET: Set to true use the item listing tooltip instead of rendering each item in the pouch");
+    	legacyTooltip = plegacyTooltip.getBoolean();
+    	Property pshowSlotNumber = config.get(CATEGORY_CONFIG, "showSlotNumber", false, 
+    			"Set to true show the slot number");
+    	showSlotNumber = pshowSlotNumber.getBoolean();
     	Property pshowOwned = config.get("config", "showOwned", false, 
     			"Set to true to keep the 'Belonged to:' text in the tooltip");
     	showOwned = pshowOwned.getBoolean();
@@ -122,6 +138,9 @@ public class Main{
     	Property penableRarity = config.get("config", "enableRarity", true, 
     			"Set to false disable the rarity color system");
     	enableRarity = penableRarity.getBoolean();
+    	Property pdefaultItemsShown = config.get(CATEGORY_CONFIG, "defaultItemsShown", 5, 
+    			"The number of items that will be shown by default in the tooltip");
+    	defaultItemsShown = pdefaultItemsShown.getInt();
     	
     	//Rarity options
     	Property pcommonItems = config.get("rarity", "1. commonItems", "rotten flesh, orc bone, bone, elf bone, dwarf bone, warg bone, troll bone, fur", 
@@ -184,6 +203,7 @@ public class Main{
     public void init(FMLInitializationEvent event){
     	MinecraftForge.EVENT_BUS.register(Pouchviewer.instance);
     	FMLCommonHandler.instance().bus().register(new ConfigChangedHandler());
+    	ClientRegistry.registerKeyBinding(Pouchviewer.keyBindingShowAll);
     }
     
 }
