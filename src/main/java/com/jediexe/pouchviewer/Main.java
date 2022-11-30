@@ -11,6 +11,7 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.ConfigElement;
@@ -23,7 +24,7 @@ public class Main{
 	
 	public static final String NAME = "LOTR Pouch Viewer";
     public static final String MODID = "pouchviewer";
-    public static final String VERSION = "1.9";
+    public static final String VERSION = "2.0";
     
     public static Configuration config = new Configuration(new File("config/pouchviewer.cfg"));
     public static List<ConfigCategory> Categories;
@@ -34,13 +35,14 @@ public class Main{
     
     public static String makeCategory(String name) {
 		ConfigCategory c = config.getCategory(name);
+		c.setLanguageKey(Main.MODID + ".config." + name);
 		Categories.add(c);
 		return name;
 	}
     
     public static String CATEGORY_CONFIG = Main.makeCategory("config");
     public static String CATEGORY_RARITY = Main.makeCategory("rarity");
-	public static String CATEGORY_RARITYCOLORS = Main.makeCategory("rarity colors");
+	public static String CATEGORY_RARITYCOLORS = Main.makeCategory("rarity_colors");
 	
 	Property plegacyTooltip = config.get(CATEGORY_CONFIG, "legacyTooltip", true, 
 			"NOT ADDED YET: Set to true use the item listing tooltip instead of rendering each item in the pouch");
