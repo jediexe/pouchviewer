@@ -24,3 +24,5 @@ Config options:
 - Rarity colors, default item color, slot color, and 'Items' text color can be changed.
 
 Feel free to use this mod in your modpacks as long as you credit me (jediexe) and link this page. This mod works on client side. Compatible with LOTR legacy mod and LOTR FA legacy mod (tested both). Compatible with Dmod. If you find any incompatibilities or bugs, please report them.
+
+Note: to use the new experimental tooltips, download the 2.0 alpha version of the mod and disable 'legacy tooltips' in the mod config settings.
