@@ -1,22 +1,16 @@
 package com.jediexe.pouchviewer;
 
-import java.awt.Color;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
 
-import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent.Phase;
-import cpw.mods.fml.common.gameevent.TickEvent.PlayerTickEvent;
-import lotr.client.gui.LOTRGuiAnvil;
+import lotr.client.gui.LOTRGuiPouch;
 import lotr.client.gui.LOTRGuiScreenBase;
-import lotr.common.inventory.LOTRContainerAnvil;
+import lotr.common.inventory.LOTRContainerPouch;
 import lotr.common.item.LOTRItemPouch;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -24,18 +18,18 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StatCollector;
 import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 
 public class Pouchviewer {
@@ -43,7 +37,7 @@ public class Pouchviewer {
 	public static Pouchviewer instance = new Pouchviewer();
 	public static RenderItem renderItem = new RenderItem();
 
-	public static KeyBinding keyBindingShowAll = new KeyBinding("Show all items in tooltip", 42, "LOTR");
+	public static KeyBinding keyBindingShowAll = new KeyBinding(I18n.format("pouchviewer.config.keybinding", "Shift"), 42, "LOTR");
 	
 	static int count;
 	static int tooltiplines;
@@ -242,13 +236,13 @@ public class Pouchviewer {
 										String slotnumber = slotColorValue + "0" + (slot + 1) + (char) 167 + "f" + ": x";
 										event.toolTip.add(new String(slotnumber +
 											ItemStack.loadItemStackFromNBT(itemData).stackSize + space + color + 
-											ItemStack.loadItemStackFromNBT(itemData).getUnlocalizedName()));
+											StatCollector.translateToLocal(ItemStack.loadItemStackFromNBT(itemData).getUnlocalizedName())));
 									}
 									else {
 										String slotnumber = slotColorValue + (slot + 1) + (char) 167 + "f" + ": x";
 										event.toolTip.add(new String(slotnumber +
 											ItemStack.loadItemStackFromNBT(itemData).stackSize + space + color + 
-											ItemStack.loadItemStackFromNBT(itemData).getUnlocalizedName()));
+											StatCollector.translateToLocal(ItemStack.loadItemStackFromNBT(itemData).getUnlocalizedName())));
 									}
 								}
 								
@@ -256,7 +250,7 @@ public class Pouchviewer {
 								else{
 									event.toolTip.add(new String((char) 167 + "f" + "x" +
 										ItemStack.loadItemStackFromNBT(itemData).stackSize + space + color + 
-										ItemStack.loadItemStackFromNBT(itemData).getUnlocalizedName()));
+										StatCollector.translateToLocal(ItemStack.loadItemStackFromNBT(itemData).getUnlocalizedName())));
 								}
 							}
 							else if (Main.nameFirst) {
@@ -264,20 +258,20 @@ public class Pouchviewer {
 									if(slot<9) {
 										String slotnumber = slotColorValue + "0" + (slot + 1) + (char) 167 + "f" + ": ";
 										event.toolTip.add(new String(slotnumber + color + 
-											ItemStack.loadItemStackFromNBT(itemData).getUnlocalizedName() + (char) 167 + "f" + " x" + 
+											StatCollector.translateToLocal(ItemStack.loadItemStackFromNBT(itemData).getUnlocalizedName()) + (char) 167 + "f" + " x" + 
 											ItemStack.loadItemStackFromNBT(itemData).stackSize));
 									}
 									else {
 										String slotnumber = slotColorValue + (slot + 1) + (char) 167 + "f" + ": ";
 										event.toolTip.add(new String(slotnumber + color + 
-											ItemStack.loadItemStackFromNBT(itemData).getUnlocalizedName() + (char) 167 + "f" + " x" + 
+											StatCollector.translateToLocal(ItemStack.loadItemStackFromNBT(itemData).getUnlocalizedName()) + (char) 167 + "f" + " x" + 
 											ItemStack.loadItemStackFromNBT(itemData).stackSize));
 									}
 								}
 
 								else{
 									event.toolTip.add(new String(color + 
-											ItemStack.loadItemStackFromNBT(itemData).getUnlocalizedName() + (char) 167 + "f" + " x" + 
+											StatCollector.translateToLocal(ItemStack.loadItemStackFromNBT(itemData).getUnlocalizedName()) + (char) 167 + "f" + " x" + 
 											ItemStack.loadItemStackFromNBT(itemData).stackSize));
 								}
 							}
@@ -378,20 +372,20 @@ public class Pouchviewer {
 										String slotnumber = slotColorValue + "0" + (slot + 1) + (char) 167 + "f" + ": x";
 										event.toolTip.add(new String(slotnumber + 
 											ItemStack.loadItemStackFromNBT(itemData).stackSize + space + color + 
-											ItemStack.loadItemStackFromNBT(itemData).getUnlocalizedName()));
+											StatCollector.translateToLocal(ItemStack.loadItemStackFromNBT(itemData).getUnlocalizedName())));
 									}
 									else {
 										String slotnumber = slotColorValue + (slot + 1) + (char) 167 + "f" + ": x";
 										event.toolTip.add(new String(slotnumber + 
 											ItemStack.loadItemStackFromNBT(itemData).stackSize + space + color + 
-											ItemStack.loadItemStackFromNBT(itemData).getUnlocalizedName()));
+											StatCollector.translateToLocal(ItemStack.loadItemStackFromNBT(itemData).getUnlocalizedName())));
 									}
 								}
 								
 								else if(j<=Main.defaultItemsShown){
 									event.toolTip.add(new String((char) 167 + "f" + "x" + 
 										ItemStack.loadItemStackFromNBT(itemData).stackSize + space + color + 
-										ItemStack.loadItemStackFromNBT(itemData).getUnlocalizedName()));
+										StatCollector.translateToLocal(ItemStack.loadItemStackFromNBT(itemData).getUnlocalizedName())));
 								}
 							}
 							else if (Main.nameFirst){
@@ -399,20 +393,21 @@ public class Pouchviewer {
 									if(slot<9) {
 										String slotnumber = slotColorValue + "0" + (slot + 1) + (char) 167 + "f" + ": ";
 										event.toolTip.add(new String(slotnumber + color + 
-											ItemStack.loadItemStackFromNBT(itemData).getUnlocalizedName() + (char) 167 + "f" + " x" +
+											StatCollector.translateToLocal(ItemStack.loadItemStackFromNBT(itemData).getUnlocalizedName()) + (char) 167 + "f" + " x" +
 											ItemStack.loadItemStackFromNBT(itemData).stackSize));
 									}
 									else {
 										String slotnumber = slotColorValue + (slot + 1) + (char) 167 + "f" + ": x";
 										event.toolTip.add(new String(slotnumber + color + 
-											ItemStack.loadItemStackFromNBT(itemData).getUnlocalizedName() + (char) 167 + "f" + " x" +
+											StatCollector.translateToLocal(ItemStack.loadItemStackFromNBT(itemData).getUnlocalizedName()) + (char) 167 + "f" + " x" +
 											ItemStack.loadItemStackFromNBT(itemData).stackSize));
 									}
 								}
 								
 								else if(j<=Main.defaultItemsShown){
 									event.toolTip.add(new String(color + 
-										ItemStack.loadItemStackFromNBT(itemData).getUnlocalizedName() + (char) 167 + "f" + " x" + 
+										StatCollector.translateToLocal(ItemStack.loadItemStackFromNBT(itemData).getUnlocalizedName()) + (char) 167 + "f" + " x" + 
+											//translate to local find out how to translate fromlang file
 										ItemStack.loadItemStackFromNBT(itemData).stackSize));
 								}
 							}
@@ -423,7 +418,7 @@ public class Pouchviewer {
 						
 						//Add "and #x more..." to the end of the default view
 						if((items.tagCount()-Main.defaultItemsShown)!=0 && j>Main.defaultItemsShown){
-							event.toolTip.add(new String((char) 167 + "o" + "and " + (items.tagCount()-Main.defaultItemsShown) + " more..."));
+							event.toolTip.add(new String((char) 167 + "o" + I18n.format("pouchviewer.legacytooltip.leftover", (items.tagCount()-Main.defaultItemsShown))));
 						}
 		    		}
 				}
@@ -535,14 +530,42 @@ public class Pouchviewer {
 					//Replace existing tooltip
 					int rows = pouch.getCapacity(event.itemStack)/9;
 					event.toolTip.clear();
-					event.toolTip.add(event.itemStack.getDisplayName() + " (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")");
+					if (Main.showDyed && pouch.isPouchDyed(pouchitem)) {
+						event.toolTip.add(event.itemStack.getDisplayName() + " - Dyed (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")");
+					}
+					else {
+						event.toolTip.add(event.itemStack.getDisplayName() + " (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")");
+					}
+					
+					//Tooltip spacing stuff
 					for (int i=0; i<=(rows); i++) {
 						event.toolTip.add("                                        ");
 					}
-					if (count==27) {
-						event.toolTip.add("                                        ");
+					if (count==27 || count==18) {
 						event.toolTip.add("                                        ");
 					}
+					
+					//Add belonged to text
+					if (Main.showOwned && event.itemStack.getTagCompound().hasKey("LOTRPrevOwnerList")) {
+						NBTTagCompound nbto = event.itemStack.getTagCompound();
+						ArrayList<String> owners = new ArrayList<>();
+						NBTTagList tagList = nbto.getTagList("LOTRPrevOwnerList", 8);
+						for (int i = 0; i < tagList.tagCount(); ++i) {
+							String owner = tagList.getStringTagAt(i);
+							owners.add(owner);
+						}
+						String o = owners.get(owners.size()-1);
+						event.toolTip.add("Owned by: " + o.split(",")[0]);
+						if (o.split(",")[1].length()>30) {
+							event.toolTip.add((o.split(",")[1]).split(" ", 2)[0]);
+							event.toolTip.add((o.split(",")[1]).split(" ", 2)[1]);
+						}
+						else {
+							event.toolTip.add(o.split(",")[1]);
+						}
+					}
+					
+					//Finish off by counting tooltip lines
 					tooltiplines = event.toolTip.size();
 				}
 				else {
@@ -560,28 +583,19 @@ public class Pouchviewer {
 		if (event.gui instanceof GuiContainer) {
 			GuiContainer gui = (GuiContainer)event.gui;
 			Slot slot = null;
+			//Check all the slots for the pouch
 			for (int i = 0; i < gui.inventorySlots.inventorySlots.size(); i++) {
 				slot = gui.inventorySlots.getSlot(i);
 				if (slot!=null) {
 					if (slot.getStack()!=null) {
-						/*int guiLeft = (gui.width-176)/2;
-						int guiTop = (gui.height-166)/2;
-						if (Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode) {
-							guiLeft = (gui.width-194)/2;
-							guiTop = (gui.height-136)/2;
-						}
-						if (gui instanceof LOTRGuiAnvil) {
-							guiTop = (gui.height-198)/2;
-						}
-						if (Minecraft.getMinecraft().thePlayer.getActivePotionEffects().size()>0) {
-							guiLeft+=60;
-						}*/
-						if (slot.getStack().getItem() instanceof LOTRItemPouch && 
-								Minecraft.getMinecraft().thePlayer.inventory.getItemStack()==null &&
-								slot.getStack() == pouchitem) { //&& isMouseOverSlot(slot, event.mouseX, event.mouseY, guiLeft, guiTop)) {
+						//First check if the item is a pouch, check that the cursor isn't holding an item, check that the item is the same as the pouch whose tooltip is being rendered
+						if (slot.getStack().getItem() instanceof LOTRItemPouch && Minecraft.getMinecraft().thePlayer.inventory.getItemStack()==null && slot.getStack() == pouchitem) {
 							if (pouchitem!=null) {
 								if (slot.getStack()==pouchitem) {
 									draw();
+									//Set pouch item to null after drawing,
+									//otherwise it will keep drawing items even if not hovering
+									//Force the tooltip to keep telling the gui that there is a pouch tooltip being rendered
 									pouchitem=null;
 								}
 							}
@@ -592,50 +606,34 @@ public class Pouchviewer {
 		}
 	}
 	
-	/*@SubscribeEvent
-	public void onTick(PlayerTickEvent event) {
-		if (event.phase==Phase.START) return;
-		pouchitem=null;
-	}
-	
-    private boolean isMouseOverSlot(Slot slotIn, int mouseX, int mouseY, int guiLeft, int guiTop)
-    {
-        return this.isPointInRegion(slotIn.xDisplayPosition, slotIn.yDisplayPosition, 16, 16, mouseX, mouseY, guiLeft, guiTop);
-    }
-
-    protected boolean isPointInRegion(int left, int top, int right, int bottom, int pointX, int pointY, int guiLeft, int guiTop)
-    {
-        int i = guiLeft;
-        int j = guiTop;
-        pointX = pointX - i;
-        pointY = pointY - j;
-        return pointX >= left - 1 && pointX < left + right + 1 && pointY >= top - 1 && pointY < top + bottom + 1;
-    }*/
-	
 	public static void draw() {
 		ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft(), Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
 		int sw = sr.getScaledWidth();
 	    int sh = sr.getScaledHeight();
 	    int mx = Mouse.getX() * sw / Minecraft.getMinecraft().displayWidth;
 	    int my = sh - Mouse.getY() * sh / Minecraft.getMinecraft().displayHeight;
-	    if (count==27) my+=1;
-	    if (count==18) my-=5;
-	    if (count==9) my-=1;
-	    if (my+64>sh && count==27) {
-			my=sh-64;
+	    
+	    //Get y pos and follow the tooltip if it collides with bottom of screen, based on tooltip length
+	    int lf = 0;
+	    if (count==27) lf=5;
+	    if (count==18) lf=1;
+	    my-=lf;
+	    int a = tooltiplines*10 -5 + lf;
+	    if (my+a>sh && count==27) {
+			my=sh-a;
 		}
-		if (my+41>sh && count==18) {
-			my=sh-41;
+	    int b = tooltiplines*10 - 5 + lf;
+		if (my+b>sh && count==18) {
+			my=sh-b;
 		}
-		if (my+23>sh && count==9) {
-			my=sh-23;
-		}
+		
+		//Follow the tooltip back around if it collides with right boundary
 		if (mx+180>sw) {
 			mx=mx-184;
 		}
-        
+		
+		//Draw each item
 		for (int i = 0; i < count; ++i) {
-			//NBTTagCompound itemData = itemlist.getCompoundTagAt(i);
 			ItemStack item = null;
 			if (itemslist.get(i)==null) {
 				continue;
@@ -644,18 +642,24 @@ public class Pouchviewer {
 				NBTTagCompound itemData = (NBTTagCompound) itemslist.get(i);
 				item = ItemStack.loadItemStackFromNBT(itemData);
 			}
+			
+			//Row 1
 			if (((i)/9)==0) {
 				renderItem(renderItem, 
 						Minecraft.getMinecraft().fontRenderer, 
 						Minecraft.getMinecraft().getTextureManager(), 
 						item, mx+12+(i*18), my);
 			}
+			
+			//Row 2
 			if ((i)/9==1) {
 				renderItem(renderItem, 
 						Minecraft.getMinecraft().fontRenderer, 
 						Minecraft.getMinecraft().getTextureManager(), 
 						item, mx+12+((i-9)*18), my+18);
 			}
+			
+			//Row 3
 			if ((i)/9==2) {
 				renderItem(renderItem, 
 						Minecraft.getMinecraft().fontRenderer, 
@@ -674,6 +678,7 @@ public class Pouchviewer {
         RenderHelper.disableStandardItemLighting();
     }
 
+	//Called when config updates
 	public static void update() {
 		commonItems = Main.commonItems.toLowerCase();
 		uncommonItems = Main.uncommonItems.toLowerCase();
