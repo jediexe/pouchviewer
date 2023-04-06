@@ -13,6 +13,7 @@ import lotr.client.gui.LOTRGuiScreenBase;
 import lotr.common.inventory.LOTRContainerPouch;
 import lotr.common.item.LOTRItemPouch;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -36,16 +37,16 @@ public class Pouchviewer {
 	
 	public static Pouchviewer instance = new Pouchviewer();
 	public static RenderItem renderItem = new RenderItem();
-
-	public static KeyBinding keyBindingShowAll = new KeyBinding(I18n.format("pouchviewer.config.keybinding", "Shift"), 42, "LOTR");
 	
 	static int count;
+	static int usedslots;
 	static int tooltiplines;
 	static NBTTagList itemlist;
 	ItemStack pouchitem = null;
+	GuiContainer Agui = null;
 	static List itemslist;
 	
-	static ResourceLocation guitexture = new ResourceLocation("lotr:gui/pouch.png");
+	static ResourceLocation guitexture = new ResourceLocation("pouchviewer:pouch.png");
 	
 	static String commonItems = Main.commonItems.toLowerCase();
 	static String uncommonItems = Main.uncommonItems.toLowerCase();
@@ -143,7 +144,7 @@ public class Pouchviewer {
 					}
 					
 					//If player is pressing shift, list all items in the pouch
-		    		if(Keyboard.isKeyDown(keyBindingShowAll.getKeyCode()) && items.tagCount()>Main.defaultItemsShown){
+		    		if(Keyboard.isKeyDown(Main.keyBindingShowAll.getKeyCode()) && items.tagCount()>Main.defaultItemsShown){
 						for (int i = 0; i < items.tagCount(); ++i) {
 							NBTTagCompound itemData = items.getCompoundTagAt(i);
 							byte slot = itemData.getByte("Slot");
@@ -433,7 +434,7 @@ public class Pouchviewer {
 	    			
 	    			event.toolTip.add(new String((char) 167 + "9" + "Items"));
 	    			
-		    		if(Keyboard.isKeyDown(keyBindingShowAll.getKeyCode()) && tagList.tagCount()>Main.defaultItemsShown){
+		    		if(Keyboard.isKeyDown(Main.keyBindingShowAll.getKeyCode()) && tagList.tagCount()>Main.defaultItemsShown){
 			    		for (int i = 0; i < tagList.tagCount(); ++i) {
 							NBTTagCompound itemData = tagList.getCompoundTagAt(i);
 							byte slot = itemData.getByte("Slot");
@@ -521,7 +522,7 @@ public class Pouchviewer {
 						}
 					}
 					itemslist = list;
-					int usedslots = count-empty;
+					usedslots = count-empty;
 					
 					//Set the pouch item and get capacity
 					LOTRItemPouch pouch = (LOTRItemPouch)event.itemStack.getItem();
@@ -538,11 +539,25 @@ public class Pouchviewer {
 					}
 					
 					//Tooltip spacing stuff
-					for (int i=0; i<=(rows); i++) {
-						event.toolTip.add("                                        ");
+					if (Main.showEmptySlots) {
+						for (int i=0; i<=(rows); i++) {
+							event.toolTip.add("                                        ");
+						}
+						if (count==27 || count==18) {
+							event.toolTip.add("                                        ");
+						}
 					}
-					if (count==27 || count==18) {
+					if (!Main.showEmptySlots) {
 						event.toolTip.add("                                        ");
+						event.toolTip.add("                                        ");
+						if (usedslots>9) {
+							event.toolTip.add("                                        ");
+							event.toolTip.add("                                        ");
+						}
+						if (usedslots>18) {
+							event.toolTip.add("                                        ");
+							event.toolTip.add("                                        ");
+						}
 					}
 					
 					//Add belonged to text
@@ -578,14 +593,21 @@ public class Pouchviewer {
 		}
 	}
 	
+	//Checks if its in a container and should render items
 	@SubscribeEvent
-	public void afterDraw(final GuiScreenEvent.DrawScreenEvent.Post event) {
+	public void checkContainer(final GuiScreenEvent.DrawScreenEvent.Post event) {
 		if (event.gui instanceof GuiContainer) {
-			GuiContainer gui = (GuiContainer)event.gui;
+			Agui = (GuiContainer)event.gui;
+		}
+		else {
+			Agui = null;
+		}
+		//Call the rendering of items after tooltip gen so items render above other things
+		if (Agui!=null) {
 			Slot slot = null;
 			//Check all the slots for the pouch
-			for (int i = 0; i < gui.inventorySlots.inventorySlots.size(); i++) {
-				slot = gui.inventorySlots.getSlot(i);
+			for (int i = 0; i < Agui.inventorySlots.inventorySlots.size(); i++) {
+				slot = Agui.inventorySlots.getSlot(i);
 				if (slot!=null) {
 					if (slot.getStack()!=null) {
 						//First check if the item is a pouch, check that the cursor isn't holding an item, check that the item is the same as the pouch whose tooltip is being rendered
@@ -606,6 +628,30 @@ public class Pouchviewer {
 		}
 	}
 	
+	public static void drawBackground(int x, int y) {
+		RenderHelper.enableGUIStandardItemLighting();
+        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+        GL11.glEnable(32826);
+        GL11.glDisable(2896);
+        GL11.glEnable(3042);
+        GL11.glDisable(2929);
+        GL11.glDepthMask(false);
+        GL11.glBlendFunc(770, 771);
+        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+        GL11.glPushMatrix();
+        GL11.glDisable(3008);
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0f, 240.0f);
+        Minecraft.getMinecraft().renderEngine.bindTexture(guitexture);
+        Gui gui = new Gui();
+		gui.drawTexturedModalRect(x, y, 0, 0, 162, 18);
+		GL11.glDisable(3042);
+        GL11.glEnable(2929);
+        GL11.glDisable(32826);
+        GL11.glDepthMask(true);
+        GL11.glPopMatrix();
+        RenderHelper.disableStandardItemLighting();
+    }
+	
 	public static void draw() {
 		ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft(), Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
 		int sw = sr.getScaledWidth();
@@ -613,68 +659,145 @@ public class Pouchviewer {
 	    int mx = Mouse.getX() * sw / Minecraft.getMinecraft().displayWidth;
 	    int my = sh - Mouse.getY() * sh / Minecraft.getMinecraft().displayHeight;
 	    
-	    //Get y pos and follow the tooltip if it collides with bottom of screen, based on tooltip length
-	    int lf = 0;
-	    if (count==27) lf=5;
-	    if (count==18) lf=1;
-	    my-=lf;
-	    int a = tooltiplines*10 -5 + lf;
-	    if (my+a>sh && count==27) {
-			my=sh-a;
-		}
-	    int b = tooltiplines*10 - 5 + lf;
-		if (my+b>sh && count==18) {
-			my=sh-b;
-		}
-		
-		//Follow the tooltip back around if it collides with right boundary
-		if (mx+180>sw) {
-			mx=mx-184;
-		}
-		
-		//Draw each item
-		for (int i = 0; i < count; ++i) {
-			ItemStack item = null;
-			if (itemslist.get(i)==null) {
-				continue;
+	    if (Main.showEmptySlots) {
+		    //Get y pos and follow the tooltip if it collides with bottom of screen, based on tooltip length
+		    int lf = 0;
+		    if (count==27) {
+		    	lf=5;
+		    }
+		    if (count==18) {
+		    	lf=1;
+		    }
+		    my-=lf;
+		    int a = tooltiplines*10 -5 + lf;
+		    if (my+a>sh && count==27) {
+				my=sh-a;
 			}
-			else {
-				NBTTagCompound itemData = (NBTTagCompound) itemslist.get(i);
-				item = ItemStack.loadItemStackFromNBT(itemData);
+		    int b = tooltiplines*10 - 5 + lf;
+			if (my+b>sh && count==18) {
+				my=sh-b;
 			}
 			
-			//Row 1
-			if (((i)/9)==0) {
+			//Follow the tooltip back around if it collides with right boundary
+			if (mx+180>sw) {
+				mx=mx-184;
+			}
+			/*
+			//Draw background gui
+			if (count==9) {
+				drawBackground(mx+11,my);
+			}
+			if (count==18) {
+				drawBackground(mx+11,my);
+				drawBackground(mx+11,my+18);
+			}
+			if (count==27) {
+				drawBackground(mx+11,my);
+				drawBackground(mx+11,my+18);
+				drawBackground(mx+11,my+36);
+			}
+			*/
+			//Draw each item
+			for (int i = 0; i < count; ++i) {
+				ItemStack item = null;
+				if (itemslist.get(i)==null) {
+					continue;
+				}
+				else {
+					NBTTagCompound itemData = (NBTTagCompound) itemslist.get(i);
+					item = ItemStack.loadItemStackFromNBT(itemData);
+				}
+				
+				//Row 1
+				if (((i)/9)==0) {
+					renderItem(renderItem, 
+							Minecraft.getMinecraft().fontRenderer, 
+							Minecraft.getMinecraft().getTextureManager(), 
+							item, mx+12+(i*18), my);
+				}
+				
+				//Row 2
+				if ((i)/9==1) {
+					renderItem(renderItem, 
+							Minecraft.getMinecraft().fontRenderer, 
+							Minecraft.getMinecraft().getTextureManager(), 
+							item, mx+12+((i-9)*18), my+18);
+				}
+				
+				//Row 3
+				if ((i)/9==2) {
+					renderItem(renderItem, 
+							Minecraft.getMinecraft().fontRenderer, 
+							Minecraft.getMinecraft().getTextureManager(), 
+							item, mx+12+((i-18)*18), my+36);
+				}
+			}
+	    }
+	    else {
+	    	//Get y pos and follow the tooltip if it collides with bottom of screen, based on tooltip length
+		    int lf = 0;
+		    if (usedslots>18) lf=5;
+		    if (usedslots>9) lf=1;
+		    my-=lf;
+		    int a = tooltiplines*10 -5 + lf;
+		    if (my+a>sh && usedslots>18) {
+				my=sh-a;
+			}
+		    int b = tooltiplines*10 - 5 + lf;
+			if (my+b>sh && usedslots>9) {
+				my=sh-b;
+			}
+			
+			//Follow the tooltip back around if it collides with right boundary
+			if (mx+180>sw) {
+				mx=mx-184;
+			}
+			
+			//Draw each item
+			for (int i = 0; i < usedslots; ++i) {
+				ItemStack item = null;
+				NBTTagCompound itemData = (NBTTagCompound) itemlist.getCompoundTagAt(i);
+				item = ItemStack.loadItemStackFromNBT(itemData);
 				renderItem(renderItem, 
 						Minecraft.getMinecraft().fontRenderer, 
 						Minecraft.getMinecraft().getTextureManager(), 
 						item, mx+12+(i*18), my);
+				
+				//Row 2
+				if (usedslots>i && i==8) {
+					my+=18;
+					mx-=162;
+				}
+				
+				//Row 3
+				if (usedslots>i && i==17) {
+					my+=18;
+					mx-=162;
+				}
 			}
-			
-			//Row 2
-			if ((i)/9==1) {
-				renderItem(renderItem, 
-						Minecraft.getMinecraft().fontRenderer, 
-						Minecraft.getMinecraft().getTextureManager(), 
-						item, mx+12+((i-9)*18), my+18);
-			}
-			
-			//Row 3
-			if ((i)/9==2) {
-				renderItem(renderItem, 
-						Minecraft.getMinecraft().fontRenderer, 
-						Minecraft.getMinecraft().getTextureManager(), 
-						item, mx+12+((i-18)*18), my+36);
-			}
-		}
+	    }
 	}
 	
 	public static void renderItem(final RenderItem ri, final FontRenderer fr, final TextureManager tm, final ItemStack item, final int x, final int y) {
         RenderHelper.enableGUIStandardItemLighting();
+        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
         GL11.glEnable(32826);
+        GL11.glDisable(2896);
+        GL11.glEnable(3042);
+        GL11.glDisable(2929);
+        GL11.glDepthMask(false);
+        GL11.glBlendFunc(770, 771);
+        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+        GL11.glPushMatrix();
+        GL11.glDisable(3008);
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0f, 240.0f);
         ri.renderItemAndEffectIntoGUI(fr, tm, item, x, y);
     	ri.renderItemOverlayIntoGUI(fr, tm, item, x, y);
+    	GL11.glDisable(3042);
+        GL11.glEnable(2929);
+        GL11.glDisable(32826);
+        GL11.glDepthMask(true);
+        GL11.glPopMatrix();
         RenderHelper.disableStandardItemLighting();
     }
 

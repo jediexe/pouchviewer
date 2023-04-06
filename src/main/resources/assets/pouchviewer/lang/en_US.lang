@@ -1,6 +1,7 @@
-pouchviewer.config.config=General Config
+pouchviewer.config.config=Legacy Config
 pouchviewer.config.rarity=Rarity
 pouchviewer.config.rarity_colors=Rarity Colors
+pouchviewer.config.visual=Visual Tooltip Config
 
 pouchviewer.config.keybinding=Show all items in tooltip (Default: %s)
 

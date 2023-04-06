@@ -12,6 +12,8 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.ConfigElement;
@@ -24,10 +26,12 @@ public class Main{
 	
 	public static final String NAME = "LOTR Pouch Viewer";
     public static final String MODID = "pouchviewer";
-    public static final String VERSION = "2.0";
+    public static final String VERSION = "2.1";
     
     public static Configuration config = new Configuration(new File("config/pouchviewer.cfg"));
     public static List<ConfigCategory> Categories;
+    
+    public static KeyBinding keyBindingShowAll = new KeyBinding(I18n.format("pouchviewer.config.keybinding", "Shift"), 42, "LOTR");
     
     static { 
     	Categories = new ArrayList<>();
@@ -43,9 +47,10 @@ public class Main{
     public static String CATEGORY_CONFIG = Main.makeCategory("config");
     public static String CATEGORY_RARITY = Main.makeCategory("rarity");
 	public static String CATEGORY_RARITYCOLORS = Main.makeCategory("rarity_colors");
+	public static String CATEGORY_VISUAL = Main.makeCategory("visual");
 	
 	Property plegacyTooltip = config.get(CATEGORY_CONFIG, "legacyTooltip", true, 
-			"NOT ADDED YET: Set to true use the item listing tooltip instead of rendering each item in the pouch");
+			"ALPHA FEATURE: Set to true use the item listing tooltip instead of rendering each item in the pouch");
 	Property pshowSlotNumber = config.get(CATEGORY_CONFIG, "showSlotNumber", true, 
 			"Set to true show the slot number");
 	Property pshowOwned = config.get(CATEGORY_CONFIG, "showOwned", false, 
@@ -86,6 +91,8 @@ public class Main{
 			"The default color of epic items. Valid values: dark_red, red, gold, yellow, dark_green, green, aqua, dark_aqua, dark_blue, blue, light_purple, dark_purple, white, gray, dark_gray, black");
 	Property plegendaryColor = config.get(CATEGORY_RARITYCOLORS, "5. legendaryColor", "gold", 
 			"The default color of legendary items. Valid values: dark_red, red, gold, yellow, dark_green, green, aqua, dark_aqua, dark_blue, blue, light_purple, dark_purple, white, gray, dark_gray, black");
+	Property pshowEmptySlots = config.get(CATEGORY_VISUAL, "showEmptySlots", true, 
+			"Set to true use add gaps between items where an empty slot is in the pouch");
 	public static boolean legacyTooltip;
 	public static boolean showSlotNumber;
 	public static boolean showOwned;
@@ -107,6 +114,7 @@ public class Main{
     public static String rareColor;
     public static String epicColor;
     public static String legendaryColor;
+    public static boolean showEmptySlots;
     
     public static List<IConfigElement> getConfigElements() {
 		ArrayList<IConfigElement> list = new ArrayList<>();
@@ -120,7 +128,7 @@ public class Main{
     public static void load(Configuration config) {
     	//Config options
     	Property plegacyTooltip = config.get(CATEGORY_CONFIG, "legacyTooltip", true, 
-    			"NOT ADDED YET: Set to true use the item listing tooltip instead of rendering each item in the pouch");
+    			"Set to true use the item listing tooltip instead of rendering each item in the pouch");
     	legacyTooltip = plegacyTooltip.getBoolean();
     	Property pshowSlotNumber = config.get(CATEGORY_CONFIG, "showSlotNumber", false, 
     			"Set to true show the slot number");
@@ -186,6 +194,11 @@ public class Main{
     	Property plegendaryColor = config.get("rarity colors", "5. legendaryColor", "gold", 
     			"The default color of legendary items. Valid values: dark_red, red, gold, yellow, dark_green, green, aqua, dark_aqua, dark_blue, blue, light_purple, dark_purple, white, gray, dark_gray, black");
     	legendaryColor = plegendaryColor.getString();
+    	
+    	//Visual tooltip options
+    	Property pshowEmptySlots = config.get(CATEGORY_VISUAL, "showEmptySlots", true, 
+    			"Set to true use add gaps between items where an empty slot is in the pouch");
+    	showEmptySlots = pshowEmptySlots.getBoolean();
     	if (config.hasChanged()) {
     		config.save();
     	}
@@ -205,7 +218,7 @@ public class Main{
     public void init(FMLInitializationEvent event){
     	MinecraftForge.EVENT_BUS.register(Pouchviewer.instance);
     	FMLCommonHandler.instance().bus().register(new ConfigChangedHandler());
-    	ClientRegistry.registerKeyBinding(Pouchviewer.keyBindingShowAll);
+    	ClientRegistry.registerKeyBinding(keyBindingShowAll);
     }
     
 }
