@@ -1,28 +1,25 @@
 # pouchviewer
 Made for LOTR 36.14 legacy on Minecraft version 1.7.10.
 
-This LOTR addon reveals pouch contents by listing the quantity and name of each item in a pouch in the pouch's tooltip. It should also display items for most item container mods.
+_Thanks for all the comments and support for my mods! I just made a [discord server](https://discord.gg/TVxGeBbpTt "discord server") so you can give me suggestions for mods you want to see in the future, tell me if there's a bug with a mod, or if you need some help with forge mods in general. Join to be updated on my new releases and mods!_
 
-- 1.7 added item rarities, where items of your choosing can have configurable rarities/colors in the pouch tooltip! This should make it easier for you to find your valuables or to sift through loot pouches for coins. Settings can be found at 'Menu > Mods > LOTR Pouch Viewer > Config'
+Be sure to check out my other mod, [LOTR Attack Indicator Addon](https://www.curseforge.com/minecraft/mc-mods/lotr-attack-indicator-addon "LOTR Attack Indicator Addon")! If you have any suggestions for other LOTR quality of life addons, please let me know :)
 
-By default, 5 items are listed in the tooltip (can be changed in the config). This display resembles the Shulker Box tooltip that was added in later versions, so pouch contents don't overload the screen.
-![2022-10-17_13 51 36](https://user-images.githubusercontent.com/47288669/196300048-e90dc10f-7b5d-40c1-b30b-cf98b9a02e41.png)
 
-By pressing Left Shift, the player can reveal all pouch contents. The keybind can be changed at 'Options > Controls > scroll down to LOTR > show all items in tooltip'
-![2022-10-17_13 51 41](https://user-images.githubusercontent.com/47288669/196300052-31ab29af-f9d1-42a9-93a2-82cac566c32f.png)
+This LOTR addon reveals pouch contents in a GUI container tooltip.
 
-If the show slot numbers config option is enabled, the slot number each item is in will also be displayed.
-![2022-10-17_13 51 50](https://user-images.githubusercontent.com/47288669/196300059-42aaee6c-9753-4ea8-979a-724765b81dee.png)
+- 2.2 finally implemented the visual tooltip, where items are displayed neatly in a pouch container! Make sure to clear config files if there are any issues
 
-It also removes the "Dyed" and "Belonged to: name" text from all items to make tooltips less cluttered (can be toggled in the config)
-![2022-10-17_13 51 57](https://user-images.githubusercontent.com/47288669/196300065-a2558801-2050-4d0e-9b35-853ae18dc7b6.png)
+Default resource pack with show background + fancy borders on
+![visualtooltip](https://media.forgecdn.net/attachments/644/763/visualpouch.png "visualtooltip")
 
-Config options:
-- The 'Items' text can be disabled.
-- The name of items can be moved before/after the quantity of the item.
-- Rarities for specific items can be added.
-- Rarity colors, default item color, slot color, and 'Items' text color can be changed.
+Setting "Fancy Borders" turned off, dyed text on, show owned on, and using a resource pack
+![showbackground](https://media.forgecdn.net/attachments/644/764/showbackground.png "showbackground")
 
-Feel free to use this mod in your modpacks as long as you credit me (jediexe) and link this page. This mod works on client side. Compatible with LOTR legacy mod and LOTR FA legacy mod (tested both). Compatible with Dmod. If you find any incompatibilities or bugs, please report them.
+Setting "Fancy Borders" turned on, dyed text on, fancy borders automatically disables show owned, and using a resource pack
+![fancyborders](https://media.forgecdn.net/attachments/644/765/fancyborders.png "fancyborders")
 
-Note: to use the new experimental tooltips, download the 2.0 alpha version of the mod and disable 'legacy tooltips' in the mod config settings.
+
+Feel free to use this mod in your modpacks as long as you credit me (jediexe) and link this page.
+This mod works on client side.
+Compatible with [LOTR legacy mod](https://www.curseforge.com/minecraft/mc-mods/the-lord-of-the-rings-mod-legacy "LOTR legacy mod") and [LOTR FA legacy](https://www.curseforge.com/minecraft/mc-mods/the-first-age-submod "LOTR FA legacy") mod (tested both). Compatible with [D-mod](https://www.curseforge.com/minecraft/mc-mods/dmod "D-mod"). If you find any incompatibilities or bugs, please report them.
