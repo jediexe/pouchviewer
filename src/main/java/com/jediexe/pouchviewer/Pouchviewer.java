@@ -1,5 +1,6 @@
 package com.jediexe.pouchviewer;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,11 +20,13 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -41,12 +44,16 @@ public class Pouchviewer {
 	static int count;
 	static int usedslots;
 	static int tooltiplines;
-	static NBTTagList itemlist;
-	ItemStack pouchitem = null;
-	GuiContainer Agui = null;
-	static List itemslist;
+	static ItemStack pouchitem = null;
+	static LOTRItemPouch pouch = null;
 	
-	static ResourceLocation guitexture = new ResourceLocation("pouchviewer:pouch.png");
+	static List itemslist;
+	static List<String> tooltiplist;
+	static NBTTagList itemlist;
+	
+	GuiContainer Agui = null;
+	
+	static ResourceLocation guitexture = new ResourceLocation("lotr:gui/pouch.png");
 	
 	static String commonItems = Main.commonItems.toLowerCase();
 	static String uncommonItems = Main.uncommonItems.toLowerCase();
@@ -61,6 +68,9 @@ public class Pouchviewer {
 	static String rareColor = Main.rareColor;
 	static String epicColor = Main.epicColor;
 	static String legendaryColor = Main.legendaryColor;
+	//static int textColorRed = Main.textColorRed;
+	//static int textColorGreen = Main.textColorGreen;
+	//static int textColorBlue = Main.textColorBlue;
 	String[] colors = new String[]
 			{"dark_red", "red", "gold", 
 			"yellow", "dark_green", "green", 
@@ -144,7 +154,7 @@ public class Pouchviewer {
 					}
 					
 					//If player is pressing shift, list all items in the pouch
-		    		if(Keyboard.isKeyDown(Main.keyBindingShowAll.getKeyCode()) && items.tagCount()>Main.defaultItemsShown){
+		    		if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) && items.tagCount()>Main.defaultItemsShown){
 						for (int i = 0; i < items.tagCount(); ++i) {
 							NBTTagCompound itemData = items.getCompoundTagAt(i);
 							byte slot = itemData.getByte("Slot");
@@ -434,7 +444,7 @@ public class Pouchviewer {
 	    			
 	    			event.toolTip.add(new String((char) 167 + "9" + "Items"));
 	    			
-		    		if(Keyboard.isKeyDown(Main.keyBindingShowAll.getKeyCode()) && tagList.tagCount()>Main.defaultItemsShown){
+		    		if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) && tagList.tagCount()>Main.defaultItemsShown){
 			    		for (int i = 0; i < tagList.tagCount(); ++i) {
 							NBTTagCompound itemData = tagList.getCompoundTagAt(i);
 							byte slot = itemData.getByte("Slot");
@@ -502,10 +512,13 @@ public class Pouchviewer {
 	    	}
 		}
 		
+		//If its the visual tooltip:
 		else {
+			//If its a LOTR pouch
 			if(event.itemStack.hasTagCompound() && event.itemStack.getTagCompound().hasKey("LOTRPouchData")){
 	    		NBTTagCompound nbt = event.itemStack.getTagCompound().getCompoundTag("LOTRPouchData");
 				NBTTagList items = nbt.getTagList("Items", 10);
+				//If pouch has an item in it
 				if(items.tagCount()>0 && event.toolTip!=null){
 					//Make a list of the slots with null in slots that don't have items
 					ArrayList<NBTTagCompound> list = new ArrayList<NBTTagCompound>();
@@ -525,43 +538,61 @@ public class Pouchviewer {
 					usedslots = count-empty;
 					
 					//Set the pouch item and get capacity
-					LOTRItemPouch pouch = (LOTRItemPouch)event.itemStack.getItem();
+					pouch = (LOTRItemPouch)event.itemStack.getItem();
+					int rows = pouch.getCapacity(event.itemStack)/9;
 					pouchitem = event.itemStack;
 					
 					//Replace existing tooltip
-					int rows = pouch.getCapacity(event.itemStack)/9;
-					event.toolTip.clear();
+					int size = event.toolTip.size();
+					int z = size-1;
+					while (event.toolTip.size()>1){
+						event.toolTip.remove(z);
+						z-=1;
+					}
+					event.toolTip.remove(event.toolTip.size()-1);
 					if (Main.showDyed && pouch.isPouchDyed(pouchitem)) {
-						event.toolTip.add(event.itemStack.getDisplayName() + " - Dyed (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")");
+						event.toolTip.add(0, event.itemStack.getDisplayName() + " - Dyed (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")");
 					}
 					else {
-						event.toolTip.add(event.itemStack.getDisplayName() + " (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")");
+						event.toolTip.add(0, event.itemStack.getDisplayName() + " (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")");
 					}
 					
 					//Tooltip spacing stuff
-					if (Main.showEmptySlots) {
-						for (int i=0; i<=(rows); i++) {
-							event.toolTip.add("                                        ");
+					if (!Main.showBackground || (Main.showBackground && !Main.fancyBorders)) {
+						if (Main.showEmptySlots) {
+							event.toolTip.add("           ");
+							for (int i=0; i<=(rows-1); i++) {
+								event.toolTip.add("                                        ");
+							}
+							if (count==18) {
+								event.toolTip.add("                                        ");
+							}
+							if (count==27) {
+								event.toolTip.add("                                        ");
+								event.toolTip.add("                                        ");
+							}
 						}
-						if (count==27 || count==18) {
+						if (!Main.showEmptySlots) {
 							event.toolTip.add("                                        ");
+							event.toolTip.add("                                        ");
+							if (usedslots>9) {
+								event.toolTip.add("                                        ");
+								event.toolTip.add("                                        ");
+							}
+							if (usedslots>18) {
+								event.toolTip.add("                                        ");
+								event.toolTip.add("                                        ");
+							}
 						}
 					}
-					if (!Main.showEmptySlots) {
+					if (Main.fancyBorders && Main.showBackground) {
+						event.toolTip.add("          ");
 						event.toolTip.add("                                        ");
-						event.toolTip.add("                                        ");
-						if (usedslots>9) {
-							event.toolTip.add("                                        ");
-							event.toolTip.add("                                        ");
-						}
-						if (usedslots>18) {
-							event.toolTip.add("                                        ");
-							event.toolTip.add("                                        ");
-						}
+						event.toolTip.remove(0);
 					}
 					
 					//Add belonged to text
-					if (Main.showOwned && event.itemStack.getTagCompound().hasKey("LOTRPrevOwnerList")) {
+					if (Main.showOwned && event.itemStack.getTagCompound().hasKey("LOTRPrevOwnerList") && !Main.fancyBorders) {
 						NBTTagCompound nbto = event.itemStack.getTagCompound();
 						ArrayList<String> owners = new ArrayList<>();
 						NBTTagList tagList = nbto.getTagList("LOTRPrevOwnerList", 8);
@@ -582,6 +613,7 @@ public class Pouchviewer {
 					
 					//Finish off by counting tooltip lines
 					tooltiplines = event.toolTip.size();
+					tooltiplist = event.toolTip;
 				}
 				else {
 					pouchitem=null;
@@ -628,30 +660,6 @@ public class Pouchviewer {
 		}
 	}
 	
-	public static void drawBackground(int x, int y) {
-		RenderHelper.enableGUIStandardItemLighting();
-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-        GL11.glEnable(32826);
-        GL11.glDisable(2896);
-        GL11.glEnable(3042);
-        GL11.glDisable(2929);
-        GL11.glDepthMask(false);
-        GL11.glBlendFunc(770, 771);
-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-        GL11.glPushMatrix();
-        GL11.glDisable(3008);
-        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0f, 240.0f);
-        Minecraft.getMinecraft().renderEngine.bindTexture(guitexture);
-        Gui gui = new Gui();
-		gui.drawTexturedModalRect(x, y, 0, 0, 162, 18);
-		GL11.glDisable(3042);
-        GL11.glEnable(2929);
-        GL11.glDisable(32826);
-        GL11.glDepthMask(true);
-        GL11.glPopMatrix();
-        RenderHelper.disableStandardItemLighting();
-    }
-	
 	public static void draw() {
 		ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft(), Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
 		int sw = sr.getScaledWidth();
@@ -661,42 +669,81 @@ public class Pouchviewer {
 	    
 	    if (Main.showEmptySlots) {
 		    //Get y pos and follow the tooltip if it collides with bottom of screen, based on tooltip length
-		    int lf = 0;
-		    if (count==27) {
-		    	lf=5;
-		    }
-		    if (count==18) {
-		    	lf=1;
-		    }
-		    my-=lf;
-		    int a = tooltiplines*10 -5 + lf;
+		    my-=1;
+		    int a = tooltiplines*10 - 4;
 		    if (my+a>sh && count==27) {
 				my=sh-a;
 			}
-		    int b = tooltiplines*10 - 5 + lf;
+		    int b = tooltiplines*10 - 4;
 			if (my+b>sh && count==18) {
 				my=sh-b;
 			}
 			
 			//Follow the tooltip back around if it collides with right boundary
 			if (mx+180>sw) {
-				mx=mx-184;
+				mx=mx-180;
+				if (!Main.fancyBorders) {
+					mx=mx-4;
+				}
 			}
-			/*
+			
 			//Draw background gui
-			if (count==9) {
-				drawBackground(mx+11,my);
+			if (Main.showBackground) {
+				if (count==9) {
+					drawBackground(mx+11,my, 7, 97, 162, 18);
+				}
+				if (count==18) {
+					drawBackground(mx+11,my, 7, 97, 162, 36);
+				}
+				if (count==27) {
+					drawBackground(mx+11,my, 7, 97, 162, 54);
+				}
+				if (Main.fancyBorders) {
+					if (count==9) {
+						//Left border
+						drawBackground(mx+4,my-2, 0, 97, 7, 27);
+						//Right border
+						drawBackground(mx+173,my-2, 169, 97, 7, 27);
+						//Top border
+						drawBackground(mx+4,my-16, 0, 0, 176, 16);
+						//Bottom border
+						drawBackground(mx+4,my+22, 0, 173, 176, 7);
+						//Bottom padding
+						drawBackground(mx+11,my+18, 7, 5, 176, 4);
+					}
+					if (count==18) {
+						//Left border
+						drawBackground(mx+4,my-2, 0, 97, 7, 45);
+						//Right border
+						drawBackground(mx+173,my-2, 169, 97, 7, 45);
+						//Top border
+						drawBackground(mx+4,my-16, 0, 0, 176, 16);
+						//Bottom border
+						drawBackground(mx+4,my+40, 0, 173, 176, 7);
+						//Bottom padding
+						drawBackground(mx+11,my+36, 7, 5, 176, 4);
+					}
+					if (count==27) {
+						//Left border
+						drawBackground(mx+4,my-2, 0, 97, 7, 63);
+						//Right border
+						drawBackground(mx+173,my-2, 169, 97, 7, 63);
+						//Top border
+						drawBackground(mx+4,my-16, 0, 0, 176, 16);
+						//Bottom border
+						drawBackground(mx+4,my+58, 0, 173, 176, 7);
+						//Bottom padding
+						drawBackground(mx+11,my+54, 7, 5, 176, 4);
+					}
+					if (Main.showDyed) {
+						drawText(pouchitem.getDisplayName() + " - Dyed (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")", mx+11, my-11);
+					}
+					if (!Main.showDyed) {
+						drawText(pouchitem.getDisplayName() + " (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")", mx+11, my-11);
+					}
+				}
 			}
-			if (count==18) {
-				drawBackground(mx+11,my);
-				drawBackground(mx+11,my+18);
-			}
-			if (count==27) {
-				drawBackground(mx+11,my);
-				drawBackground(mx+11,my+18);
-				drawBackground(mx+11,my+36);
-			}
-			*/
+
 			//Draw each item
 			for (int i = 0; i < count; ++i) {
 				ItemStack item = null;
@@ -707,24 +754,18 @@ public class Pouchviewer {
 					NBTTagCompound itemData = (NBTTagCompound) itemslist.get(i);
 					item = ItemStack.loadItemStackFromNBT(itemData);
 				}
-				
-				//Row 1
 				if (((i)/9)==0) {
 					renderItem(renderItem, 
 							Minecraft.getMinecraft().fontRenderer, 
 							Minecraft.getMinecraft().getTextureManager(), 
 							item, mx+12+(i*18), my);
 				}
-				
-				//Row 2
 				if ((i)/9==1) {
 					renderItem(renderItem, 
 							Minecraft.getMinecraft().fontRenderer, 
 							Minecraft.getMinecraft().getTextureManager(), 
 							item, mx+12+((i-9)*18), my+18);
 				}
-				
-				//Row 3
 				if ((i)/9==2) {
 					renderItem(renderItem, 
 							Minecraft.getMinecraft().fontRenderer, 
@@ -735,22 +776,83 @@ public class Pouchviewer {
 	    }
 	    else {
 	    	//Get y pos and follow the tooltip if it collides with bottom of screen, based on tooltip length
-		    int lf = 0;
-		    if (usedslots>18) lf=5;
-		    if (usedslots>9) lf=1;
-		    my-=lf;
-		    int a = tooltiplines*10 -5 + lf;
+		    my-=1;
+		    int a = tooltiplines*10 - 4;
 		    if (my+a>sh && usedslots>18) {
 				my=sh-a;
 			}
-		    int b = tooltiplines*10 - 5 + lf;
+		    int b = tooltiplines*10 - 4;
 			if (my+b>sh && usedslots>9) {
 				my=sh-b;
 			}
 			
 			//Follow the tooltip back around if it collides with right boundary
 			if (mx+180>sw) {
-				mx=mx-184;
+				mx=mx-180;
+				if (!Main.fancyBorders) {
+					mx=mx-4;
+				}
+			}
+
+			//Draw background gui
+			if (Main.showBackground) {
+				if (usedslots<=9) {
+					drawBackground(mx+11,my, 7, 97, 162, 18);
+				}
+				if (usedslots>9) {
+					drawBackground(mx+11,my, 7, 97, 162, 36);
+				}
+				if (usedslots>18) {
+					drawBackground(mx+11,my, 7, 97, 162, 54);
+				}
+				if (Main.fancyBorders) {
+					if (usedslots>18) {
+						//Left border
+						drawBackground(mx+4,my-2, 0, 97, 7, 63);
+						//Right border
+						drawBackground(mx+173,my-2, 169, 97, 7, 63);
+						//Top border
+						drawBackground(mx+4,my-16, 0, 0, 176, 16);
+						//Bottom border
+						drawBackground(mx+4,my+58, 0, 173, 176, 7);
+						//Bottom padding
+						drawBackground(mx+11,my+54, 7, 5, 176, 4);
+					}
+					else {
+						if (usedslots>9) {
+							//Left border
+							drawBackground(mx+4,my-2, 0, 97, 7, 45);
+							//Right border
+							drawBackground(mx+173,my-2, 169, 97, 7, 45);
+							//Top border
+							drawBackground(mx+4,my-16, 0, 0, 176, 16);
+							//Bottom border
+							drawBackground(mx+4,my+40, 0, 173, 176, 7);
+							//Bottom padding
+							drawBackground(mx+11,my+36, 7, 5, 176, 4);
+						}
+						else {
+							if (usedslots<=9) {
+								//Left border
+								drawBackground(mx+4,my-2, 0, 97, 7, 27);
+								//Right border
+								drawBackground(mx+173,my-2, 169, 97, 7, 27);
+								//Top border
+								drawBackground(mx+4,my-16, 0, 0, 176, 16);
+								//Bottom border
+								drawBackground(mx+4,my+22, 0, 173, 176, 7);
+								//Bottom padding
+								drawBackground(mx+11,my+18, 7, 5, 176, 4);
+							}
+						}
+					}
+					if (Main.showDyed) {
+						drawText(pouchitem.getDisplayName() + " - Dyed (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")", mx+11, my-11);
+					}
+					if (!Main.showDyed) {
+						drawText(pouchitem.getDisplayName() + " (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")", mx+11, my-11);
+					}
+				}
 			}
 			
 			//Draw each item
@@ -762,14 +864,10 @@ public class Pouchviewer {
 						Minecraft.getMinecraft().fontRenderer, 
 						Minecraft.getMinecraft().getTextureManager(), 
 						item, mx+12+(i*18), my);
-				
-				//Row 2
 				if (usedslots>i && i==8) {
 					my+=18;
 					mx-=162;
 				}
-				
-				//Row 3
 				if (usedslots>i && i==17) {
 					my+=18;
 					mx-=162;
@@ -779,27 +877,83 @@ public class Pouchviewer {
 	}
 	
 	public static void renderItem(final RenderItem ri, final FontRenderer fr, final TextureManager tm, final ItemStack item, final int x, final int y) {
-        RenderHelper.enableGUIStandardItemLighting();
-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-        GL11.glEnable(32826);
-        GL11.glDisable(2896);
-        GL11.glEnable(3042);
+		if (item.getItem() instanceof ItemBlock) {
+			RenderHelper.enableGUIStandardItemLighting();
+	        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	        GL11.glEnable(32826);
+	        GL11.glEnable(3042);
+	        GL11.glDisable(2929);
+	        GL11.glDepthMask(false);
+	        GL11.glBlendFunc(770, 771);
+	        GL11.glPushMatrix();
+	        GL11.glDisable(3008);
+	        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0f, 240.0f);
+			ri.renderItemAndEffectIntoGUI(fr, tm, item, x, y);
+	    	ri.renderItemOverlayIntoGUI(fr, tm, item, x, y);
+	    	GL11.glDisable(3042);
+	        GL11.glEnable(2929);
+	        GL11.glDisable(32826);
+	        GL11.glDepthMask(true);
+	        GL11.glPopMatrix();
+	    	RenderHelper.disableStandardItemLighting();
+		}
+		else {
+	        RenderHelper.enableGUIStandardItemLighting();
+	        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	        GL11.glEnable(32826);
+	        //2896 causes issues with blocks
+	        GL11.glDisable(2896);
+	        GL11.glEnable(3042);
+	        //2929 puts it above/below creative tabs and other items
+	        GL11.glDisable(2929);
+	        GL11.glDepthMask(false);
+	        GL11.glBlendFunc(770, 771);
+	        GL11.glPushMatrix();
+	        GL11.glDisable(3008);
+	        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0f, 240.0f);
+	        ri.renderItemAndEffectIntoGUI(fr, tm, item, x, y);
+	    	ri.renderItemOverlayIntoGUI(fr, tm, item, x, y);
+	    	GL11.glDisable(3042);
+	        GL11.glEnable(2929);
+	        GL11.glEnable(2896);
+	        GL11.glDisable(32826);
+	        GL11.glDepthMask(true);
+	        GL11.glPopMatrix();
+	        RenderHelper.disableStandardItemLighting();
+		}
+    }
+	
+	public static void drawBackground(int x, int y, int a, int b, int aa, int bb) {
+		RenderHelper.enableGUIStandardItemLighting();
+		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
         GL11.glDisable(2929);
         GL11.glDepthMask(false);
-        GL11.glBlendFunc(770, 771);
-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-        GL11.glPushMatrix();
-        GL11.glDisable(3008);
-        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0f, 240.0f);
-        ri.renderItemAndEffectIntoGUI(fr, tm, item, x, y);
-    	ri.renderItemOverlayIntoGUI(fr, tm, item, x, y);
-    	GL11.glDisable(3042);
+        Minecraft.getMinecraft().renderEngine.bindTexture(guitexture);
+        Gui gui = new Gui();
+        gui.drawTexturedModalRect(x, y-1, a, b, aa, bb);
         GL11.glEnable(2929);
-        GL11.glDisable(32826);
         GL11.glDepthMask(true);
-        GL11.glPopMatrix();
-        RenderHelper.disableStandardItemLighting();
+		RenderHelper.disableStandardItemLighting();
     }
+	
+	public static void drawText(String text, int x, int y) {
+		//Find out why color doesn't chage at all here
+		GL11.glPushMatrix();
+		//GL11.glColor4f(textColorRed/255.0f, textColorGreen/255.0f, textColorBlue/255.0f, 1.0f);
+		GL11.glEnable(GL11.GL_BLEND);
+        GL11.glDisable(2929);
+        GL11.glDepthMask(false);
+        //System.out.println(Integer.toHexString(Color.decode("#" + textColor).hashCode()));
+        //Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(text, x, y, 3158064);
+        //Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(text, x, y, 3158064);
+        //String hex = String.format("#%02x%02x%02x", textColorRed, textColorBlue, textColorGreen);  
+        //int tc = Color.decode(hex).getRGB();
+        Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(text, x, y, 0xffffff);
+        GL11.glEnable(2929);
+        GL11.glDepthMask(true);
+        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glPopMatrix();
+	}
 
 	//Called when config updates
 	public static void update() {
@@ -816,5 +970,8 @@ public class Pouchviewer {
 		rareColor = Main.rareColor;
 		epicColor = Main.epicColor;
 		legendaryColor = Main.legendaryColor;
+		//textColorRed = Main.textColorRed;
+		//textColorGreen = Main.textColorGreen;
+		//textColorBlue = Main.textColorBlue;
 	}
 }

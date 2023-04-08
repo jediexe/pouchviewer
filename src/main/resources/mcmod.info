@@ -2,8 +2,8 @@
 {
   "modid": "pouchviewer",
   "name": "LOTR Pouch Viewer",
-  "description": "LOTR mod addon to view pouch contents on hover. Left Shift will reveal all contents. More options available in Mod config.",
-  "version": "2.1",
+  "description": "LOTR mod addon to view pouch contents on hover. More options available in Mod config.",
+  "version": "2.2",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
