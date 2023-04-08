@@ -11,13 +11,13 @@ This LOTR addon reveals pouch contents in a GUI container tooltip.
 - 2.2 finally implemented the visual tooltip, where items are displayed neatly in a pouch container! Make sure to clear config files if there are any issues
 
 Default resource pack with show background + fancy borders on
-![visualtooltip](https://media.forgecdn.net/attachments/644/763/visualpouch.png "visualtooltip")
+![visualtooltip](https://media.forgecdn.net/attachments/644/763/visualpouch.png)
 
 Setting "Fancy Borders" turned off, dyed text on, show owned on, and using a resource pack
-![showbackground](https://media.forgecdn.net/attachments/644/764/showbackground.png "showbackground")
+![showbackground](https://media.forgecdn.net/attachments/644/764/showbackground.png)
 
 Setting "Fancy Borders" turned on, dyed text on, fancy borders automatically disables show owned, and using a resource pack
-![fancyborders](https://media.forgecdn.net/attachments/644/765/fancyborders.png "fancyborders")
+![fancyborders](https://media.forgecdn.net/attachments/644/765/fancyborders.png)
 
 
 Feel free to use this mod in your modpacks as long as you credit me (jediexe) and link this page.
