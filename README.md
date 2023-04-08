@@ -1,5 +1,5 @@
 # pouchviewer
-Made for LOTR 36.14 legacy on Minecraft version 1.7.10.
+Made for LOTR 36.15 legacy on Minecraft version 1.7.10.
 
 _Thanks for all the comments and support for my mods! I just made a [discord server](https://discord.gg/TVxGeBbpTt "discord server") so you can give me suggestions for mods you want to see in the future, tell me if there's a bug with a mod, or if you need some help with forge mods in general. Join to be updated on my new releases and mods!_
 
