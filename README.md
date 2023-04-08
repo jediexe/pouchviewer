@@ -12,6 +12,7 @@ This LOTR addon reveals pouch contents in a GUI container tooltip.
 
 
 Default resource pack with show background + fancy borders on
+
 ![image](https://user-images.githubusercontent.com/47288669/230710332-41109d41-4924-44ff-9036-611834b23718.png)
 
 
