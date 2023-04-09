@@ -6,9 +6,11 @@ _Thanks for all the comments and support for my mods! I just made a [discord ser
 Be sure to check out my other mod, [LOTR Attack Indicator Addon](https://www.curseforge.com/minecraft/mc-mods/lotr-attack-indicator-addon "LOTR Attack Indicator Addon")! If you have any suggestions for other LOTR quality of life addons, please let me know :)
 
 
+
 This LOTR addon reveals pouch contents in a GUI container tooltip.
 
 - 2.2 finally implemented the visual tooltip, where items are displayed neatly in a pouch container! Make sure to clear config files if there are any issues
+
 
 
 Default resource pack with show background + fancy borders on
@@ -24,6 +26,11 @@ Setting "Fancy Borders" turned off, dyed text on, show owned on, and using a res
 Setting "Fancy Borders" turned on, dyed text on, fancy borders automatically disables show owned, and using a resource pack
 
 ![image](https://user-images.githubusercontent.com/47288669/230710343-05341122-44f9-41dd-8036-57c3838ec765.png)
+
+
+Setting "Use Pouch Color" turned on, fancy borders and show background on, dyed text on
+
+![image](https://user-images.githubusercontent.com/47288669/230801036-bfd8d582-1c70-495f-b73c-f9da17fe15bc.png)
 
 
 
