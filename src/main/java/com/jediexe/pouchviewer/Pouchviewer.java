@@ -54,6 +54,7 @@ public class Pouchviewer {
 	GuiContainer Agui = null;
 	
 	static ResourceLocation guitexture = new ResourceLocation("lotr:gui/pouch.png");
+	static ResourceLocation nocolortexture = new ResourceLocation("pouchviewer:pouch.png");
 	
 	static String commonItems = Main.commonItems.toLowerCase();
 	static String uncommonItems = Main.uncommonItems.toLowerCase();
@@ -68,9 +69,6 @@ public class Pouchviewer {
 	static String rareColor = Main.rareColor;
 	static String epicColor = Main.epicColor;
 	static String legendaryColor = Main.legendaryColor;
-	//static int textColorRed = Main.textColorRed;
-	//static int textColorGreen = Main.textColorGreen;
-	//static int textColorBlue = Main.textColorBlue;
 	String[] colors = new String[]
 			{"dark_red", "red", "gold", 
 			"yellow", "dark_green", "green", 
@@ -550,11 +548,16 @@ public class Pouchviewer {
 						z-=1;
 					}
 					event.toolTip.remove(event.toolTip.size()-1);
-					if (Main.showDyed && pouch.isPouchDyed(pouchitem)) {
-						event.toolTip.add(0, event.itemStack.getDisplayName() + " - Dyed (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")");
+					if (!Main.showDyed) {
+						event.toolTip.add(0, event.itemStack.getDisplayName() + " (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")");
 					}
 					else {
-						event.toolTip.add(0, event.itemStack.getDisplayName() + " (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")");
+						if (pouch.isPouchDyed(pouchitem)) {
+							event.toolTip.add(0, event.itemStack.getDisplayName() + " - " + I18n.format("item.lotr.pouch.dyed") + " (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")");
+						}
+						else {
+							event.toolTip.add(0, event.itemStack.getDisplayName() + " (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")");
+						}
 					}
 					
 					//Tooltip spacing stuff
@@ -735,11 +738,16 @@ public class Pouchviewer {
 						//Bottom padding
 						drawBackground(mx+11,my+54, 7, 5, 176, 4);
 					}
-					if (Main.showDyed) {
-						drawText(pouchitem.getDisplayName() + " - Dyed (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")", mx+11, my-11);
-					}
 					if (!Main.showDyed) {
 						drawText(pouchitem.getDisplayName() + " (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")", mx+11, my-11);
+					}
+					else {
+						if (pouch.isPouchDyed(pouchitem)) {
+							drawText(pouchitem.getDisplayName() + " - " + I18n.format("item.lotr.pouch.dyed") + " (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")", mx+11, my-11);
+						}
+						else {
+							drawText(pouchitem.getDisplayName() + " (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")", mx+11, my-11);
+						}
 					}
 				}
 			}
@@ -774,6 +782,8 @@ public class Pouchviewer {
 				}
 			}
 	    }
+	    
+	    //If empty slots are not showing (compressed tooltip)
 	    else {
 	    	//Get y pos and follow the tooltip if it collides with bottom of screen, based on tooltip length
 		    my-=1;
@@ -846,11 +856,16 @@ public class Pouchviewer {
 							}
 						}
 					}
-					if (Main.showDyed) {
-						drawText(pouchitem.getDisplayName() + " - Dyed (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")", mx+11, my-11);
-					}
 					if (!Main.showDyed) {
 						drawText(pouchitem.getDisplayName() + " (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")", mx+11, my-11);
+					}
+					else {
+						if (pouch.isPouchDyed(pouchitem)) {
+							drawText(pouchitem.getDisplayName() + " - " + I18n.format("item.lotr.pouch.dyed") + " (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")", mx+11, my-11);
+						}
+						else {
+							drawText(pouchitem.getDisplayName() + " (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")", mx+11, my-11);
+						}
 					}
 				}
 			}
@@ -901,10 +916,10 @@ public class Pouchviewer {
 	        RenderHelper.enableGUIStandardItemLighting();
 	        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	        GL11.glEnable(32826);
-	        //2896 causes issues with blocks
+	        //2896 removes shading
 	        GL11.glDisable(2896);
 	        GL11.glEnable(3042);
-	        //2929 puts it above/below creative tabs and other items
+	        //2929 puts it above creative tabs and other items
 	        GL11.glDisable(2929);
 	        GL11.glDepthMask(false);
 	        GL11.glBlendFunc(770, 771);
@@ -925,23 +940,51 @@ public class Pouchviewer {
 	
 	public static void drawBackground(int x, int y, int a, int b, int aa, int bb) {
 		RenderHelper.enableGUIStandardItemLighting();
-		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		if (Main.usePouchColor) {
+			try {
+				int color = pouch.getPouchColor(pouchitem);
+				String hex = ("#" + Integer.toHexString(color));
+				if (hex.length()!=6 && hex.startsWith("#ff")) {
+					hex = hex.replaceFirst("#ff", "#");
+				}
+				Color pouchcolor = Color.decode(hex);
+				float red = (float)Color.decode(hex).getRed();
+			    float green = (float)Color.decode(hex).getGreen();
+			    float blue = (float)Color.decode(hex).getBlue();
+				GL11.glColor4f(red/255.0f, green/255.0f, blue/255.0f, 1.0f);
+			}
+			catch (Exception e){
+				GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+				System.err.println(e);
+			}
+		}
+		else {
+			GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		}
+		GL11.glEnable(32826);
         GL11.glDisable(2929);
+        GL11.glDisable(2896);
         GL11.glDepthMask(false);
-        Minecraft.getMinecraft().renderEngine.bindTexture(guitexture);
+        if (!Main.usePouchColor) Minecraft.getMinecraft().renderEngine.bindTexture(guitexture);
+        if (Main.usePouchColor) Minecraft.getMinecraft().renderEngine.bindTexture(nocolortexture);
         Gui gui = new Gui();
         gui.drawTexturedModalRect(x, y-1, a, b, aa, bb);
         GL11.glEnable(2929);
+        GL11.glEnable(2896);
+        GL11.glDisable(32826);
         GL11.glDepthMask(true);
 		RenderHelper.disableStandardItemLighting();
     }
 	
 	public static void drawText(String text, int x, int y) {
+		RenderHelper.enableGUIStandardItemLighting();
 		//Find out why color doesn't chage at all here
 		GL11.glPushMatrix();
 		//GL11.glColor4f(textColorRed/255.0f, textColorGreen/255.0f, textColorBlue/255.0f, 1.0f);
 		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glEnable(32826);
         GL11.glDisable(2929);
+        GL11.glDisable(2896);
         GL11.glDepthMask(false);
         //System.out.println(Integer.toHexString(Color.decode("#" + textColor).hashCode()));
         //Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(text, x, y, 3158064);
@@ -950,9 +993,12 @@ public class Pouchviewer {
         //int tc = Color.decode(hex).getRGB();
         Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(text, x, y, 0xffffff);
         GL11.glEnable(2929);
+        GL11.glEnable(2896);
+        GL11.glDisable(32826);
         GL11.glDepthMask(true);
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glPopMatrix();
+        RenderHelper.disableStandardItemLighting();
 	}
 
 	//Called when config updates
@@ -970,8 +1016,5 @@ public class Pouchviewer {
 		rareColor = Main.rareColor;
 		epicColor = Main.epicColor;
 		legendaryColor = Main.legendaryColor;
-		//textColorRed = Main.textColorRed;
-		//textColorGreen = Main.textColorGreen;
-		//textColorBlue = Main.textColorBlue;
 	}
 }

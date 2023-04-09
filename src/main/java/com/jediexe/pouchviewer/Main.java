@@ -26,13 +26,11 @@ public class Main{
 	
 	public static final String NAME = "LOTR Pouch Viewer";
     public static final String MODID = "pouchviewer";
-    public static final String VERSION = "2.2";
+    public static final String VERSION = "2.3";
     
     public static Configuration config = new Configuration(new File("config/pouchviewer.cfg"));
     public static List<ConfigCategory> Categories;
-    
-    //public static KeyBinding keyBindingShowAll = new KeyBinding(I18n.format("pouchviewer.config.keybinding", "Shift"), 42, "LOTR");
-    
+        
     static { 
     	Categories = new ArrayList<>();
 	} 
@@ -49,8 +47,8 @@ public class Main{
 	public static String CATEGORY_RARITYCOLORS = Main.makeCategory("rarity_colors");
 	public static String CATEGORY_VISUAL = Main.makeCategory("visual");
 	
-	Property plegacyTooltip = config.get(CATEGORY_CONFIG, "legacyTooltip", true, 
-			"ALPHA FEATURE: Set to true use the item listing tooltip instead of rendering each item in the pouch");
+	Property plegacyTooltip = config.get(CATEGORY_CONFIG, "legacyTooltip", false, 
+			"Set to true use the item listing tooltip instead of rendering each item in the pouch");
 	Property pshowSlotNumber = config.get(CATEGORY_CONFIG, "showSlotNumber", true, 
 			"Set to true show the slot number");
 	Property pnameFirst = config.get(CATEGORY_CONFIG, "nameFirst", true, 
@@ -93,19 +91,15 @@ public class Main{
 			"Set to true use add gaps between items where an empty slot is in the pouch");
 	Property pshowBackground = config.get(CATEGORY_VISUAL, "showBackground", true, 
 			"Set to true show a gui container background behind items");
-	Property pfancyBorders = config.get(CATEGORY_VISUAL, "fancyBorders", false, 
+	Property pfancyBorders = config.get(CATEGORY_VISUAL, "fancyBorders", true, 
 			"Set to true overlay fancy borders over the tooltip");
 	Property pshowOwned = config.get(CATEGORY_VISUAL, "showOwned", false, 
 			"Set to true to keep the 'Belonged to:' text in the tooltip");
 	Property pshowDyed = config.get(CATEGORY_VISUAL, "showDyed", false, 
 			"Set to true to keep the 'Dyed' text in the tooltip");
+	Property pusePouchColor = config.get(CATEGORY_VISUAL, "usePouchColor", true, 
+			"Set to true to use the pouch color as the tooltip background color");
 	
-	/*Property ptextColorRed = config.get(CATEGORY_VISUAL, "textColorRed", "255",
-			"Color for the text to display over the pouch if fancy borders is enabled. Out of 255");
-	Property ptextColorGreen = config.get(CATEGORY_VISUAL, "textColorGreen", "255",
-			"Color for the text to display over the pouch if fancy borders is enabled. Out of 255");
-	Property ptextColorBlue = config.get(CATEGORY_VISUAL, "textColorBlue", "255",
-			"Color for the text to display over the pouch if fancy borders is enabled. Out of 255");*/
 	public static boolean legacyTooltip;
 	public static boolean showSlotNumber;
 	public static boolean showOwned;
@@ -130,9 +124,7 @@ public class Main{
     public static boolean showEmptySlots;
     public static boolean showBackground;
     public static boolean fancyBorders;
-	//public static int textColorRed;
-	//public static int textColorGreen;
-	//public static int textColorBlue;
+    public static boolean usePouchColor;
     
     public static List<IConfigElement> getConfigElements() {
 		ArrayList<IConfigElement> list = new ArrayList<>();
@@ -214,25 +206,18 @@ public class Main{
     	Property pshowBackground = config.get(CATEGORY_VISUAL, "showBackground", true, 
     			"Set to true show a gui container background behind items");
     	showBackground = pshowBackground.getBoolean();
-    	Property pfancyBorders = config.get(CATEGORY_VISUAL, "fancyBorders", false, 
+    	Property pfancyBorders = config.get(CATEGORY_VISUAL, "fancyBorders", true, 
     			"Set to true overlay fancy borders over the tooltip");
     	fancyBorders = pfancyBorders.getBoolean();
-    	Property pshowOwned = config.get("CATEGORY_VISUAL", "showOwned", false, 
+    	Property pshowOwned = config.get(CATEGORY_VISUAL, "showOwned", false, 
     			"Set to true to keep the 'Belonged to:' text in the tooltip");
     	showOwned = pshowOwned.getBoolean();
-    	Property pshowDyed = config.get("CATEGORY_VISUAL", "showDyed", false, 
+    	Property pshowDyed = config.get(CATEGORY_VISUAL, "showDyed", false, 
     			"Set to true to keep the 'Dyed' text in the tooltip");
     	showDyed = pshowDyed.getBoolean();
-    	
-    	/*Property ptextColorRed = config.get(CATEGORY_VISUAL, "textColorRed", "255",
-    			"Color for the text to display over the pouch if fancy borders is enabled. Out of 255");
-    	textColorRed = ptextColorRed.getInt();
-    	Property ptextColorGreen = config.get(CATEGORY_VISUAL, "textColorGreen", "255",
-    			"Color for the text to display over the pouch if fancy borders is enabled. Out of 255");
-    	textColorGreen = ptextColorGreen.getInt();
-    	Property ptextColorBlue = config.get(CATEGORY_VISUAL, "textColorBlue", "255",
-    			"Color for the text to display over the pouch if fancy borders is enabled. Out of 255");
-    	textColorBlue = ptextColorBlue.getInt();*/
+    	Property pusePouchColor = config.get(CATEGORY_VISUAL, "usePouchColor", true, 
+    			"Set to true to use the pouch color as the tooltip background color");
+    	usePouchColor = pusePouchColor.getBoolean();
     	
     	if (config.hasChanged()) {
     		config.save();
@@ -253,7 +238,6 @@ public class Main{
     public void init(FMLInitializationEvent event){
     	MinecraftForge.EVENT_BUS.register(Pouchviewer.instance);
     	FMLCommonHandler.instance().bus().register(new ConfigChangedHandler());
-    	//ClientRegistry.registerKeyBinding(keyBindingShowAll);
     }
     
 }
