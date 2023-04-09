@@ -17,10 +17,12 @@ Default resource pack with show background + fancy borders on
 
 
 Setting "Fancy Borders" turned off, dyed text on, show owned on, and using a resource pack
+
 ![image](https://user-images.githubusercontent.com/47288669/230710336-f43dea7f-f03f-4733-bac4-76bd00cd339f.png)
 
 
 Setting "Fancy Borders" turned on, dyed text on, fancy borders automatically disables show owned, and using a resource pack
+
 ![image](https://user-images.githubusercontent.com/47288669/230710343-05341122-44f9-41dd-8036-57c3838ec765.png)
 
 
