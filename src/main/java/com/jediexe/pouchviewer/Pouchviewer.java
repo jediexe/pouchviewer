@@ -34,7 +34,6 @@ public class Pouchviewer {
 	
 	static int count;
 	static int usedslots;
-	static int tooltiplines;
 	static ItemStack pouchitem = null;
 	static LOTRItemPouch pouch = null;
 	
@@ -69,9 +68,11 @@ public class Pouchviewer {
 			}
 		}
 		
+		pouchitem=null;
+		
 		//Check if item is a LOTR pouch with items in it
 		if(event.itemStack.hasTagCompound() && event.itemStack.getTagCompound().hasKey("LOTRPouchData")){
-    		NBTTagCompound nbt = event.itemStack.getTagCompound().getCompoundTag("LOTRPouchData");
+			NBTTagCompound nbt = event.itemStack.getTagCompound().getCompoundTag("LOTRPouchData");
 			NBTTagList items = nbt.getTagList("Items", 10);
 			//If pouch has an item in it
 			if(items.tagCount()>0 && event.toolTip!=null){
@@ -94,7 +95,6 @@ public class Pouchviewer {
 				
 				//Set the pouch item and get capacity
 				pouch = (LOTRItemPouch)event.itemStack.getItem();
-				int rows = pouch.getCapacity(event.itemStack)/9;
 				pouchitem = event.itemStack;
 				
 				//Replace existing tooltip
@@ -105,82 +105,11 @@ public class Pouchviewer {
 					z-=1;
 				}
 				event.toolTip.remove(event.toolTip.size()-1);
-				if (!Main.showDyed) {
-					event.toolTip.add(0, event.itemStack.getDisplayName() + " (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")");
-				}
-				else {
-					if (pouch.isPouchDyed(pouchitem)) {
-						event.toolTip.add(0, event.itemStack.getDisplayName() + " - " + I18n.format("item.lotr.pouch.dyed") + " (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")");
-					}
-					else {
-						event.toolTip.add(0, event.itemStack.getDisplayName() + " (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")");
-					}
-				}
 				
 				//Tooltip spacing stuff
-				if (!Main.showBackground || (Main.showBackground && !Main.fancyBorders)) {
-					if (Main.showEmptySlots) {
-						event.toolTip.add("           ");
-						for (int i=0; i<=(rows-1); i++) {
-							event.toolTip.add("                                        ");
-						}
-						if (count==18) {
-							event.toolTip.add("                                        ");
-						}
-						if (count==27) {
-							event.toolTip.add("                                        ");
-							event.toolTip.add("                                        ");
-						}
-					}
-					if (!Main.showEmptySlots) {
-						event.toolTip.add("                                        ");
-						event.toolTip.add("                                        ");
-						if (usedslots>9) {
-							event.toolTip.add("                                        ");
-							event.toolTip.add("                                        ");
-						}
-						if (usedslots>18) {
-							event.toolTip.add("                                        ");
-							event.toolTip.add("                                        ");
-						}
-					}
-				}
-				if (Main.fancyBorders && Main.showBackground) {
-					event.toolTip.add("          ");
-					event.toolTip.add("                                        ");
-					event.toolTip.remove(0);
-				}
-				
-				//Add belonged to text
-				if (Main.showOwned && event.itemStack.getTagCompound().hasKey("LOTRPrevOwnerList") && !Main.fancyBorders) {
-					NBTTagCompound nbto = event.itemStack.getTagCompound();
-					ArrayList<String> owners = new ArrayList<>();
-					NBTTagList tagList = nbto.getTagList("LOTRPrevOwnerList", 8);
-					for (int i = 0; i < tagList.tagCount(); ++i) {
-						String owner = tagList.getStringTagAt(i);
-						owners.add(owner);
-					}
-					String o = owners.get(owners.size()-1);
-					event.toolTip.add("Owned by: " + o.split(",")[0]);
-					if (o.split(",")[1].length()>30) {
-						event.toolTip.add((o.split(",")[1]).split(" ", 2)[0]);
-						event.toolTip.add((o.split(",")[1]).split(" ", 2)[1]);
-					}
-					else {
-						event.toolTip.add(o.split(",")[1]);
-					}
-				}
-				
-				//Finish off by counting tooltip lines
-				tooltiplines = event.toolTip.size();
-				tooltiplist = event.toolTip;
+				event.toolTip.add(" ");
+				event.toolTip.add("                                        ");
 			}
-			else {
-				pouchitem=null;
-			}
-		}
-		else {
-			pouchitem=null;
 		}
 	}
 	
@@ -220,150 +149,124 @@ public class Pouchviewer {
 	}
 	
 	public static void draw() {
+		//Get resolution, screen width/height, mouse x/y
 		ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft(), Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
 		int sw = sr.getScaledWidth();
 	    int sh = sr.getScaledHeight();
 	    int mx = Mouse.getX() * sw / Minecraft.getMinecraft().displayWidth;
 	    int my = sh - Mouse.getY() * sh / Minecraft.getMinecraft().displayHeight;
 	    
+	    //Follow the tooltip back around if it collides with right boundary
+		if (mx+180>sw) {
+			mx=mx-180;
+		}
+	    
 	    if (Main.showEmptySlots) {
-		    //Get y pos and follow the tooltip if it collides with bottom of screen, based on tooltip length
-		    my-=1;
-		    int a = tooltiplines*10 - 4;
-		    if (my+a>sh && count==27) {
-				my=sh-a;
-			}
-		    int b = tooltiplines*10 - 4;
-			if (my+b>sh && count==18) {
-				my=sh-b;
-			}
-			
-			//Follow the tooltip back around if it collides with right boundary
-			if (mx+180>sw) {
-				mx=mx-180;
-				if (!Main.fancyBorders) {
-					mx=mx-4;
-				}
-			}
-			
 			//Draw background gui
-			if (Main.showBackground) {
-				if (count==9) {
-					drawBackground(mx+11,my, 7, 97, 162, 18);
-				}
-				if (count==18) {
-					drawBackground(mx+11,my, 7, 97, 162, 36);
-				}
-				if (count==27) {
-					drawBackground(mx+11,my, 7, 97, 162, 54);
-				}
-				if (Main.fancyBorders) {
-					if (Main.showOwned && pouchitem.getTagCompound().hasKey("LOTRPrevOwnerList")) {
-						String[] owner = pouchitem.getTagCompound().getTag("LOTRPrevOwnerList").toString().substring(4, pouchitem.getTagCompound().getTag("LOTRPrevOwnerList").toString().length()-2).split(", the ");
-						if (count==9) {
-							//Bottom padding
-							drawBackground(mx+11,my+18, 7, 5, 176, 9);
-							//Left border
-							drawBackground(mx+4,my-2, 0, 97, 7, 32);
-							//Right border
-							drawBackground(mx+173,my-2, 169, 97, 7, 32);
-							//Top border
-							drawBackground(mx+4,my-16, 0, 0, 176, 16);
-							//Bottom border
-							drawBackground(mx+4,my+27, 0, 173, 176, 7);
-							if (Main.complicatedOwner) {
-								drawText(owner[0] + " " + owner[1], mx+11, my+20);
-							}
-							else {
-								drawText(owner[1], mx+11, my+20);
-							}
-						}
-						if (count==18) {
-							//Bottom padding
-							drawBackground(mx+11,my+36, 7, 5, 176, 9);
-							//Left border
-							drawBackground(mx+4,my-2, 0, 97, 7, 50);
-							//Right border
-							drawBackground(mx+173,my-2, 169, 97, 7, 50);
-							//Top border
-							drawBackground(mx+4,my-16, 0, 0, 176, 16);
-							//Bottom border
-							drawBackground(mx+4,my+45, 0, 173, 176, 7);
-							if (Main.complicatedOwner) {
-								drawText(owner[0] + " " + owner[1], mx+11, my+38);
-							}
-							else {
-								drawText(owner[1], mx+11, my+38);
-							}
-						}
-						if (count==27) {
-							//Bottom padding
-							drawBackground(mx+11,my+54, 7, 5, 176, 9);
-							//Left border
-							drawBackground(mx+4,my-2, 0, 97, 7, 68);
-							//Right border
-							drawBackground(mx+173,my-2, 169, 97, 7, 68);
-							//Top border
-							drawBackground(mx+4,my-16, 0, 0, 176, 16);
-							//Bottom border
-							drawBackground(mx+4,my+63, 0, 173, 176, 7);
-							if (Main.complicatedOwner) {
-								drawText(owner[0] + " " + owner[1], mx+11, my+56);
-							}
-							else {
-								drawText(owner[1], mx+11, my+56);
-							}
-						}
-					}
-					else {
-						if (count==9) {
-							//Bottom padding
-							drawBackground(mx+11,my+18, 7, 5, 176, 4);
-							//Left border
-							drawBackground(mx+4,my-2, 0, 97, 7, 27);
-							//Right border
-							drawBackground(mx+173,my-2, 169, 97, 7, 27);
-							//Top border
-							drawBackground(mx+4,my-16, 0, 0, 176, 16);
-							//Bottom border
-							drawBackground(mx+4,my+22, 0, 173, 176, 7);
-						}
-						if (count==18) {
-							//Bottom padding
-							drawBackground(mx+11,my+36, 7, 5, 176, 4);
-							//Left border
-							drawBackground(mx+4,my-2, 0, 97, 7, 45);
-							//Right border
-							drawBackground(mx+173,my-2, 169, 97, 7, 45);
-							//Top border
-							drawBackground(mx+4,my-16, 0, 0, 176, 16);
-							//Bottom border
-							drawBackground(mx+4,my+40, 0, 173, 176, 7);
-						}
-						if (count==27) {
-							//Bottom padding
-							drawBackground(mx+11,my+54, 7, 5, 176, 9);
-							//Left border
-							drawBackground(mx+4,my-2, 0, 97, 7, 63);
-							//Right border
-							drawBackground(mx+173,my-2, 169, 97, 7, 63);
-							//Top border
-							drawBackground(mx+4,my-16, 0, 0, 176, 16);
-							//Bottom border
-							drawBackground(mx+4,my+58, 0, 173, 176, 7);
-						}
-					}
-					if (!Main.showDyed) {
-						drawText(pouchitem.getDisplayName() + " (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")", mx+11, my-11);
-					}
-					else {
-						if (pouch.isPouchDyed(pouchitem)) {
-							drawText(pouchitem.getDisplayName() + " - " + I18n.format("item.lotr.pouch.dyed") + " (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")", mx+11, my-11);
+			if (count==9) {
+				drawBackground(mx+11,my, 7, 97, 162, 18);
+			}
+			if (count==18) {
+				drawBackground(mx+11,my, 7, 97, 162, 36);
+			}
+			if (count==27) {
+				drawBackground(mx+11,my, 7, 97, 162, 54);
+			}
+			if (Main.showOwned && pouchitem.getTagCompound().hasKey("LOTRPrevOwnerList")) {
+				if (pouchitem.getTagCompound().getTag("LOTRPrevOwnerList")!=null) {
+					String[] owner = pouchitem.getTagCompound().getTag("LOTRPrevOwnerList").toString().substring(4, pouchitem.getTagCompound().getTag("LOTRPrevOwnerList").toString().length()-2).split(", the ");
+					if (count==9) {
+						//Bottom padding
+						drawBackground(mx+11,my+18, 7, 5, 176, 9);
+						//Left border
+						drawBackground(mx+4,my-2, 0, 97, 7, 32);
+						//Right border
+						drawBackground(mx+173,my-2, 169, 97, 7, 32);
+						//Top border
+						drawBackground(mx+4,my-16, 0, 0, 176, 16);
+						//Bottom border
+						drawBackground(mx+4,my+27, 0, 173, 176, 7);
+						if (Main.complicatedOwner) {
+							drawText(owner[0] + " " + owner[1], mx+11, my+20);
 						}
 						else {
-							drawText(pouchitem.getDisplayName() + " (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")", mx+11, my-11);
+							drawText(owner[1], mx+11, my+20);
 						}
 					}
+					if (count==18) {
+						//Bottom padding
+						drawBackground(mx+11,my+36, 7, 5, 176, 9);
+						//Left border
+						drawBackground(mx+4,my-2, 0, 97, 7, 50);
+						//Right border
+						drawBackground(mx+173,my-2, 169, 97, 7, 50);
+						//Top border
+						drawBackground(mx+4,my-16, 0, 0, 176, 16);
+						//Bottom border
+						drawBackground(mx+4,my+45, 0, 173, 176, 7);
+						if (Main.complicatedOwner) {
+							drawText(owner[0] + " " + owner[1], mx+11, my+38);
+						}
+						else {
+							drawText(owner[1], mx+11, my+38);
+						}
+					}
+					if (count==27) {
+						//Bottom padding
+						drawBackground(mx+11,my+54, 7, 5, 176, 9);
+						//Left border
+						drawBackground(mx+4,my-2, 0, 97, 7, 68);
+						//Right border
+						drawBackground(mx+173,my-2, 169, 97, 7, 68);
+						//Top border
+						drawBackground(mx+4,my-16, 0, 0, 176, 16);
+						//Bottom border
+						drawBackground(mx+4,my+63, 0, 173, 176, 7);
+						if (Main.complicatedOwner) {
+							drawText(owner[0] + " " + owner[1], mx+11, my+56);
+						}
+						else {
+							drawText(owner[1], mx+11, my+56);
+						}
+					}
+				}
+			}
+			else {
+				if (count==9) {
+					//Bottom padding
+					drawBackground(mx+11,my+18, 7, 5, 176, 4);
+					//Left border
+					drawBackground(mx+4,my-2, 0, 97, 7, 27);
+					//Right border
+					drawBackground(mx+173,my-2, 169, 97, 7, 27);
+					//Top border
+					drawBackground(mx+4,my-16, 0, 0, 176, 16);
+					//Bottom border
+					drawBackground(mx+4,my+22, 0, 173, 176, 7);
+				}
+				if (count==18) {
+					//Bottom padding
+					drawBackground(mx+11,my+36, 7, 5, 176, 4);
+					//Left border
+					drawBackground(mx+4,my-2, 0, 97, 7, 45);
+					//Right border
+					drawBackground(mx+173,my-2, 169, 97, 7, 45);
+					//Top border
+					drawBackground(mx+4,my-16, 0, 0, 176, 16);
+					//Bottom border
+					drawBackground(mx+4,my+40, 0, 173, 176, 7);
+				}
+				if (count==27) {
+					//Bottom padding
+					drawBackground(mx+11,my+54, 7, 5, 176, 9);
+					//Left border
+					drawBackground(mx+4,my-2, 0, 97, 7, 63);
+					//Right border
+					drawBackground(mx+173,my-2, 169, 97, 7, 63);
+					//Top border
+					drawBackground(mx+4,my-16, 0, 0, 176, 16);
+					//Bottom border
+					drawBackground(mx+4,my+58, 0, 173, 176, 7);
 				}
 			}
 
@@ -400,149 +303,117 @@ public class Pouchviewer {
 	    
 	    //If empty slots are not showing (compressed tooltip)
 	    else {
-	    	//Get y pos and follow the tooltip if it collides with bottom of screen, based on tooltip length
-		    my-=1;
-		    int a = tooltiplines*10 - 4;
-		    if (my+a>sh && usedslots>18) {
-				my=sh-a;
-			}
-		    int b = tooltiplines*10 - 4;
-			if (my+b>sh && usedslots>9) {
-				my=sh-b;
-			}
-			
-			//Follow the tooltip back around if it collides with right boundary
-			if (mx+180>sw) {
-				mx=mx-180;
-				if (!Main.fancyBorders) {
-					mx=mx-4;
-				}
-			}
-
 			//Draw background gui
-			if (Main.showBackground) {
-				if (usedslots<=9) {
-					drawBackground(mx+11,my, 7, 97, 162, 18);
-				}
-				if (usedslots>9) {
-					drawBackground(mx+11,my, 7, 97, 162, 36);
-				}
-				if (usedslots>18) {
-					drawBackground(mx+11,my, 7, 97, 162, 54);
-				}
-				if (Main.fancyBorders) {
-					if (Main.showOwned && pouchitem.getTagCompound().hasKey("LOTRPrevOwnerList")) {
-						String[] owner = pouchitem.getTagCompound().getTag("LOTRPrevOwnerList").toString().substring(4, pouchitem.getTagCompound().getTag("LOTRPrevOwnerList").toString().length()-2).split(", the ");
-						if (usedslots>18) {
-							//Left border
-							drawBackground(mx+4,my-2, 0, 97, 7, 63);
-							//Right border
-							drawBackground(mx+173,my-2, 169, 97, 7, 63);
-							//Top border
-							drawBackground(mx+4,my-16, 0, 0, 176, 16);
-							//Bottom border
-							drawBackground(mx+4,my+58, 0, 173, 176, 7);
-							//Bottom padding
-							drawBackground(mx+11,my+54, 7, 5, 176, 4);
-							if (Main.complicatedOwner) {
-								drawText(owner[0] + " " + owner[1], mx+11, my+56);
-							}
-							else {
-								drawText(owner[1], mx+11, my+56);
-							}
+			if (usedslots<=9) {
+				drawBackground(mx+11,my, 7, 97, 162, 18);
+			}
+			if (usedslots>9) {
+				drawBackground(mx+11,my, 7, 97, 162, 36);
+			}
+			if (usedslots>18) {
+				drawBackground(mx+11,my, 7, 97, 162, 54);
+			}
+			if (Main.showOwned && pouchitem.getTagCompound().hasKey("LOTRPrevOwnerList")) {
+				if (pouchitem.getTagCompound().getTag("LOTRPrevOwnerList")!=null) {
+					String[] owner = pouchitem.getTagCompound().getTag("LOTRPrevOwnerList").toString().substring(4, pouchitem.getTagCompound().getTag("LOTRPrevOwnerList").toString().length()-2).split(", the ");
+					if (usedslots>18) {
+						//Left border
+						drawBackground(mx+4,my-2, 0, 97, 7, 63);
+						//Right border
+						drawBackground(mx+173,my-2, 169, 97, 7, 63);
+						//Top border
+						drawBackground(mx+4,my-16, 0, 0, 176, 16);
+						//Bottom border
+						drawBackground(mx+4,my+58, 0, 173, 176, 7);
+						//Bottom padding
+						drawBackground(mx+11,my+54, 7, 5, 176, 4);
+						if (Main.complicatedOwner) {
+							drawText(owner[0] + " " + owner[1], mx+11, my+56);
 						}
 						else {
-							if (usedslots>9) {
-								//Left border
-								drawBackground(mx+4,my-2, 0, 97, 7, 45);
-								//Right border
-								drawBackground(mx+173,my-2, 169, 97, 7, 45);
-								//Top border
-								drawBackground(mx+4,my-16, 0, 0, 176, 16);
-								//Bottom border
-								drawBackground(mx+4,my+40, 0, 173, 176, 7);
-								//Bottom padding
-								drawBackground(mx+11,my+36, 7, 5, 176, 4);
-								if (Main.complicatedOwner) {
-									drawText(owner[0] + " " + owner[1], mx+11, my+38);
-								}
-								else {
-									drawText(owner[1], mx+11, my+38);
-								}
-							}
-							else {
-								if (usedslots<=9) {
-									//Left border
-									drawBackground(mx+4,my-2, 0, 97, 7, 27);
-									//Right border
-									drawBackground(mx+173,my-2, 169, 97, 7, 27);
-									//Top border
-									drawBackground(mx+4,my-16, 0, 0, 176, 16);
-									//Bottom border
-									drawBackground(mx+4,my+22, 0, 173, 176, 7);
-									//Bottom padding
-									drawBackground(mx+11,my+18, 7, 5, 176, 4);
-									if (Main.complicatedOwner) {
-										drawText(owner[0] + " " + owner[1], mx+11, my+20);
-									}
-									else {
-										drawText(owner[1], mx+11, my+20);
-									}
-								}
-							}
+							drawText(owner[1], mx+11, my+56);
 						}
-					}
-					if (!Main.showOwned) {
-						if (usedslots>18) {
-							//Bottom padding
-							drawBackground(mx+11,my+54, 7, 5, 176, 9);
-							//Left border
-							drawBackground(mx+4,my-2, 0, 97, 7, 63);
-							//Right border
-							drawBackground(mx+173,my-2, 169, 97, 7, 63);
-							//Top border
-							drawBackground(mx+4,my-16, 0, 0, 176, 16);
-							//Bottom border
-							drawBackground(mx+4,my+58, 0, 173, 176, 7);
-						}
-						else {
-							if (usedslots>9) {
-								//Bottom padding
-								drawBackground(mx+11,my+36, 7, 5, 176, 4);
-								//Left border
-								drawBackground(mx+4,my-2, 0, 97, 7, 45);
-								//Right border
-								drawBackground(mx+173,my-2, 169, 97, 7, 45);
-								//Top border
-								drawBackground(mx+4,my-16, 0, 0, 176, 16);
-								//Bottom border
-								drawBackground(mx+4,my+40, 0, 173, 176, 7);
-							}
-							else {
-								if (usedslots<=9) {
-									//Bottom padding
-									drawBackground(mx+11,my+18, 7, 5, 176, 4);
-									//Left border
-									drawBackground(mx+4,my-2, 0, 97, 7, 27);
-									//Right border
-									drawBackground(mx+173,my-2, 169, 97, 7, 27);
-									//Top border
-									drawBackground(mx+4,my-16, 0, 0, 176, 16);
-									//Bottom border
-									drawBackground(mx+4,my+22, 0, 173, 176, 7);
-								}
-							}
-						}
-					}
-					if (!Main.showDyed) {
-						drawText(pouchitem.getDisplayName() + " (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")", mx+11, my-11);
 					}
 					else {
-						if (pouch.isPouchDyed(pouchitem)) {
-							drawText(pouchitem.getDisplayName() + " - " + I18n.format("item.lotr.pouch.dyed") + " (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")", mx+11, my-11);
+						if (usedslots>9) {
+							//Left border
+							drawBackground(mx+4,my-2, 0, 97, 7, 45);
+							//Right border
+							drawBackground(mx+173,my-2, 169, 97, 7, 45);
+							//Top border
+							drawBackground(mx+4,my-16, 0, 0, 176, 16);
+							//Bottom border
+							drawBackground(mx+4,my+40, 0, 173, 176, 7);
+							//Bottom padding
+							drawBackground(mx+11,my+36, 7, 5, 176, 4);
+							if (Main.complicatedOwner) {
+								drawText(owner[0] + " " + owner[1], mx+11, my+38);
+							}
+							else {
+								drawText(owner[1], mx+11, my+38);
+							}
 						}
 						else {
-							drawText(pouchitem.getDisplayName() + " (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")", mx+11, my-11);
+							if (usedslots<=9) {
+								//Left border
+								drawBackground(mx+4,my-2, 0, 97, 7, 27);
+								//Right border
+								drawBackground(mx+173,my-2, 169, 97, 7, 27);
+								//Top border
+								drawBackground(mx+4,my-16, 0, 0, 176, 16);
+								//Bottom border
+								drawBackground(mx+4,my+22, 0, 173, 176, 7);
+								//Bottom padding
+								drawBackground(mx+11,my+18, 7, 5, 176, 4);
+								if (Main.complicatedOwner) {
+									drawText(owner[0] + " " + owner[1], mx+11, my+20);
+								}
+								else {
+									drawText(owner[1], mx+11, my+20);
+								}
+							}
+						}
+					}
+				}
+			}
+			if (!Main.showOwned) {
+				if (usedslots>18) {
+					//Bottom padding
+					drawBackground(mx+11,my+54, 7, 5, 176, 9);
+					//Left border
+					drawBackground(mx+4,my-2, 0, 97, 7, 63);
+					//Right border
+					drawBackground(mx+173,my-2, 169, 97, 7, 63);
+					//Top border
+					drawBackground(mx+4,my-16, 0, 0, 176, 16);
+					//Bottom border
+					drawBackground(mx+4,my+58, 0, 173, 176, 7);
+				}
+				else {
+					if (usedslots>9) {
+						//Bottom padding
+						drawBackground(mx+11,my+36, 7, 5, 176, 4);
+						//Left border
+						drawBackground(mx+4,my-2, 0, 97, 7, 45);
+						//Right border
+						drawBackground(mx+173,my-2, 169, 97, 7, 45);
+						//Top border
+						drawBackground(mx+4,my-16, 0, 0, 176, 16);
+						//Bottom border
+						drawBackground(mx+4,my+40, 0, 173, 176, 7);
+					}
+					else {
+						if (usedslots<=9) {
+							//Bottom padding
+							drawBackground(mx+11,my+18, 7, 5, 176, 4);
+							//Left border
+							drawBackground(mx+4,my-2, 0, 97, 7, 27);
+							//Right border
+							drawBackground(mx+173,my-2, 169, 97, 7, 27);
+							//Top border
+							drawBackground(mx+4,my-16, 0, 0, 176, 16);
+							//Bottom border
+							drawBackground(mx+4,my+22, 0, 173, 176, 7);
 						}
 					}
 				}
@@ -567,6 +438,19 @@ public class Pouchviewer {
 				}
 			}
 	    }
+	    
+	    //Draw name
+	    if (!Main.showDyed) {
+			drawText(pouchitem.getDisplayName() + " (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")", mx+11, my-11);
+		}
+		else {
+			if (pouch.isPouchDyed(pouchitem)) {
+				drawText(pouchitem.getDisplayName() + " - " + I18n.format("item.lotr.pouch.dyed") + " (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")", mx+11, my-11);
+			}
+			else {
+				drawText(pouchitem.getDisplayName() + " (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")", mx+11, my-11);
+			}
+		}
 	}
 	
 	public static void renderItem(final RenderItem ri, final FontRenderer fr, final TextureManager tm, final ItemStack item, final int x, final int y) {

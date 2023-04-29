@@ -44,19 +44,13 @@ public class Main{
 	}
 	
 	public static boolean showEmptySlots;
-    public static boolean showBackground;
-    public static boolean fancyBorders;
-    public static boolean usePouchColor;
     public static boolean showOwned;
     public static boolean complicatedOwner;
     public static boolean showDyed;
+    public static boolean usePouchColor;
     public static String CATEGORY_VISUAL = Main.makeCategory("visual");
     Property pshowEmptySlots = config.get(CATEGORY_VISUAL, "showEmptySlots", true, 
 			"Set to true use add gaps between items where an empty slot is in the pouch");
-	Property pshowBackground = config.get(CATEGORY_VISUAL, "showBackground", true, 
-			"Set to true show a gui container background behind items");
-	Property pfancyBorders = config.get(CATEGORY_VISUAL, "fancyBorders", true, 
-			"Set to true overlay fancy borders over the tooltip");
 	Property pshowOwned = config.get(CATEGORY_VISUAL, "showOwned", false, 
 			"Set to true to keep the 'Belonged to:' text in the tooltip");
 	Property pcomplicatedOwner = config.get(CATEGORY_VISUAL, "complicatedOwner", false, 
@@ -79,12 +73,6 @@ public class Main{
     	Property pshowEmptySlots = config.get(CATEGORY_VISUAL, "showEmptySlots", true, 
     			"Set to true use add gaps between items where an empty slot is in the pouch");
     	showEmptySlots = pshowEmptySlots.getBoolean();
-    	Property pshowBackground = config.get(CATEGORY_VISUAL, "showBackground", true, 
-    			"Set to true show a gui container background behind items");
-    	showBackground = pshowBackground.getBoolean();
-    	Property pfancyBorders = config.get(CATEGORY_VISUAL, "fancyBorders", true, 
-    			"Set to true overlay fancy borders over the tooltip");
-    	fancyBorders = pfancyBorders.getBoolean();
     	Property pshowOwned = config.get(CATEGORY_VISUAL, "showOwned", false, 
     			"Set to true to keep the 'Belonged to:' text in the tooltip");
     	showOwned = pshowOwned.getBoolean();
