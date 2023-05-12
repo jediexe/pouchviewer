@@ -186,11 +186,13 @@ public class Pouchviewer {
 						drawBackground(mx+4,my-16, 0, 0, 176, 16);
 						//Bottom border
 						drawBackground(mx+4,my+27, 0, 173, 176, 7);
-						if (Main.complicatedOwner) {
-							drawText(owner[0] + " " + owner[1], mx+11, my+20);
-						}
-						else {
-							drawText(owner[1], mx+11, my+20);
+						if (owner!=null) {
+							if (Main.complicatedOwner) {
+								drawText(owner[0] + " " + owner[1], mx+11, my+20);
+							}
+							else if (owner.length==2) {
+								drawText(owner[1], mx+11, my+20);
+							}
 						}
 					}
 					if (count==18) {
@@ -204,11 +206,13 @@ public class Pouchviewer {
 						drawBackground(mx+4,my-16, 0, 0, 176, 16);
 						//Bottom border
 						drawBackground(mx+4,my+45, 0, 173, 176, 7);
-						if (Main.complicatedOwner) {
-							drawText(owner[0] + " " + owner[1], mx+11, my+38);
-						}
-						else {
-							drawText(owner[1], mx+11, my+38);
+						if (owner!=null) {
+							if (Main.complicatedOwner) {
+								drawText(owner[0] + " " + owner[1], mx+11, my+38);
+							}
+							else if (owner.length==2) {
+								drawText(owner[1], mx+11, my+38);
+							}
 						}
 					}
 					if (count==27) {
@@ -222,11 +226,13 @@ public class Pouchviewer {
 						drawBackground(mx+4,my-16, 0, 0, 176, 16);
 						//Bottom border
 						drawBackground(mx+4,my+63, 0, 173, 176, 7);
-						if (Main.complicatedOwner) {
-							drawText(owner[0] + " " + owner[1], mx+11, my+56);
-						}
-						else {
-							drawText(owner[1], mx+11, my+56);
+						if (owner!=null) {
+							if (Main.complicatedOwner) {
+								drawText(owner[0] + " " + owner[1], mx+11, my+56);
+							}
+							else if (owner.length==2) {
+								drawText(owner[1], mx+11, my+56);
+							}
 						}
 					}
 				}
@@ -327,11 +333,13 @@ public class Pouchviewer {
 						drawBackground(mx+4,my+58, 0, 173, 176, 7);
 						//Bottom padding
 						drawBackground(mx+11,my+54, 7, 5, 176, 4);
-						if (Main.complicatedOwner) {
-							drawText(owner[0] + " " + owner[1], mx+11, my+56);
-						}
-						else {
-							drawText(owner[1], mx+11, my+56);
+						if (owner!=null) {
+							if (Main.complicatedOwner) {
+								drawText(owner[0] + " " + owner[1], mx+11, my+56);
+							}
+							else if (owner.length==2) {
+								drawText(owner[1], mx+11, my+56);
+							}
 						}
 					}
 					else {
@@ -346,11 +354,13 @@ public class Pouchviewer {
 							drawBackground(mx+4,my+40, 0, 173, 176, 7);
 							//Bottom padding
 							drawBackground(mx+11,my+36, 7, 5, 176, 4);
-							if (Main.complicatedOwner) {
-								drawText(owner[0] + " " + owner[1], mx+11, my+38);
-							}
-							else {
-								drawText(owner[1], mx+11, my+38);
+							if (owner!=null) {
+								if (Main.complicatedOwner) {
+									drawText(owner[0] + " " + owner[1], mx+11, my+38);
+								}
+								else if (owner.length==2) {
+									drawText(owner[1], mx+11, my+38);
+								}
 							}
 						}
 						else {
@@ -365,11 +375,13 @@ public class Pouchviewer {
 								drawBackground(mx+4,my+22, 0, 173, 176, 7);
 								//Bottom padding
 								drawBackground(mx+11,my+18, 7, 5, 176, 4);
-								if (Main.complicatedOwner) {
-									drawText(owner[0] + " " + owner[1], mx+11, my+20);
-								}
-								else {
-									drawText(owner[1], mx+11, my+20);
+								if (owner!=null) {
+									if (Main.complicatedOwner) {
+										drawText(owner[0] + " " + owner[1], mx+11, my+20);
+									}
+									else if (owner.length==2) {
+										drawText(owner[1], mx+11, my+20);
+									}
 								}
 							}
 						}
