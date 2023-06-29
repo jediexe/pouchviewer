@@ -27,7 +27,7 @@ public class Main{
 	
 	public static final String NAME = "LOTR Pouch Viewer";
     public static final String MODID = "pouchviewer";
-    public static final String VERSION = "2.4.1";
+    public static final String VERSION = "2.4.2";
     
     public static Configuration config = new Configuration(new File("config/lotrpouchviewer.cfg"));
     public static List<ConfigCategory> Categories;
@@ -92,19 +92,6 @@ public class Main{
     }
     
     public static void setupandload(FMLPreInitializationEvent event) {
-    	try {
-            Files.deleteIfExists(Paths.get("config/pouchviewer.cfg"));
-        }
-        catch (NoSuchFileException e) {
-            System.out.println("No such file/directory exists");
-        }
-        catch (DirectoryNotEmptyException e) {
-            System.out.println("Directory is not empty.");
-        }
-        catch (IOException e) {
-            System.out.println("Invalid permissions.");
-        }
-        System.out.println("Deletion successful.");
     	config.load();
     	Main.load(config);
     }

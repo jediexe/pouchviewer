@@ -9,7 +9,6 @@ public class ConfigChangedHandler {
     public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
     	if (Main.MODID.equals(event.modID)){
 			Main.load(Main.config);
-			Pouchviewer.update();
     	}
 	}
 
