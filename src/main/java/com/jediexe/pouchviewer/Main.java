@@ -1,11 +1,6 @@
 package com.jediexe.pouchviewer;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.DirectoryNotEmptyException;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,16 +44,11 @@ public class Main{
     public static boolean showDyed;
     public static boolean usePouchColor;
     public static String CATEGORY_VISUAL = Main.makeCategory("visual");
-    Property pshowEmptySlots = config.get(CATEGORY_VISUAL, "showEmptySlots", true, 
-			"Set to true use add gaps between items where an empty slot is in the pouch");
-	Property pshowOwned = config.get(CATEGORY_VISUAL, "showOwned", false, 
-			"Set to true to keep the 'Belonged to:' text in the tooltip");
-	Property pcomplicatedOwner = config.get(CATEGORY_VISUAL, "complicatedOwner", false, 
-			"Set to true to use the actual name of the previous owner in the visual tooltip (risk of text overflow)");
-	Property pshowDyed = config.get(CATEGORY_VISUAL, "showDyed", false, 
-			"Set to true to keep the 'Dyed' text in the tooltip");
-	Property pusePouchColor = config.get(CATEGORY_VISUAL, "usePouchColor", true, 
-			"Set to true to use the pouch color as the tooltip background color");
+    Property pshowEmptySlots = config.get(CATEGORY_VISUAL, "showEmptySlots", true, "Set to true use add gaps between items where an empty slot is in the pouch");
+	Property pshowOwned = config.get(CATEGORY_VISUAL, "showOwned", false, "Set to true to keep the 'Belonged to:' text in the tooltip");
+	Property pcomplicatedOwner = config.get(CATEGORY_VISUAL, "complicatedOwner", false, "Set to true to use the actual name of the previous owner in the visual tooltip (risk of text overflow)");
+	Property pshowDyed = config.get(CATEGORY_VISUAL, "showDyed", false, "Set to true to keep the 'Dyed' text in the tooltip");
+	Property pusePouchColor = config.get(CATEGORY_VISUAL, "usePouchColor", true, "Set to true to use the pouch color as the tooltip background color");
     
     public static List<IConfigElement> getConfigElements() {
 		ArrayList<IConfigElement> list = new ArrayList<>();
@@ -70,25 +60,17 @@ public class Main{
 	}
     
     public static void load(Configuration config) {
-    	Property pshowEmptySlots = config.get(CATEGORY_VISUAL, "showEmptySlots", true, 
-    			"Set to true use add gaps between items where an empty slot is in the pouch");
+    	Property pshowEmptySlots = config.get(CATEGORY_VISUAL, "showEmptySlots", true, "Set to true use add gaps between items where an empty slot is in the pouch");
     	showEmptySlots = pshowEmptySlots.getBoolean();
-    	Property pshowOwned = config.get(CATEGORY_VISUAL, "showOwned", false, 
-    			"Set to true to keep the 'Belonged to:' text in the tooltip");
+    	Property pshowOwned = config.get(CATEGORY_VISUAL, "showOwned", false, "Set to true to keep the 'Belonged to:' text in the tooltip");
     	showOwned = pshowOwned.getBoolean();
-    	Property pcomplicatedOwner = config.get(CATEGORY_VISUAL, "complicatedOwner", false, 
-    			"Set to true to use the actual name of the previous owner in the visual tooltip (risk of text overflow)");
+    	Property pcomplicatedOwner = config.get(CATEGORY_VISUAL, "complicatedOwner", false, "Set to true to use the actual name of the previous owner in the visual tooltip (risk of text overflow)");
     	complicatedOwner = pcomplicatedOwner.getBoolean();
-    	Property pshowDyed = config.get(CATEGORY_VISUAL, "showDyed", false, 
-    			"Set to true to keep the 'Dyed' text in the tooltip");
+    	Property pshowDyed = config.get(CATEGORY_VISUAL, "showDyed", false, "Set to true to keep the 'Dyed' text in the tooltip");
     	showDyed = pshowDyed.getBoolean();
-    	Property pusePouchColor = config.get(CATEGORY_VISUAL, "usePouchColor", true, 
-    			"Set to true to use the pouch color as the tooltip background color");
+    	Property pusePouchColor = config.get(CATEGORY_VISUAL, "usePouchColor", true, "Set to true to use the pouch color as the tooltip background color");
     	usePouchColor = pusePouchColor.getBoolean();
-    	
-    	if (config.hasChanged()) {
-    		config.save();
-    	}
+    	if (config.hasChanged()) config.save();
     }
     
     public static void setupandload(FMLPreInitializationEvent event) {

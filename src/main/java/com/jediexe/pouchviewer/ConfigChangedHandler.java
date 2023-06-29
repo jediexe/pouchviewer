@@ -7,9 +7,7 @@ public class ConfigChangedHandler {
 	
 	@SubscribeEvent
     public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
-    	if (Main.MODID.equals(event.modID)){
-			Main.load(Main.config);
-    	}
+    	if (Main.MODID.equals(event.modID)) Main.load(Main.config);
 	}
 
 }

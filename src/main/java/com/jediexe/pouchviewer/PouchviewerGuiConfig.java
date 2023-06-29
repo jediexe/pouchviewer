@@ -6,9 +6,7 @@ import net.minecraft.client.gui.GuiScreen;
 public class PouchviewerGuiConfig extends GuiConfig {
 	
 	public PouchviewerGuiConfig(GuiScreen parentScreen) {
-		super(parentScreen, 
-				Main.getConfigElements(), Main.MODID, 
-				false, false, GuiConfig.getAbridgedConfigPath(Main.config.toString()));
+		super(parentScreen, Main.getConfigElements(), Main.MODID, false, false, GuiConfig.getAbridgedConfigPath(Main.config.toString()));
 	}
 	
 }
