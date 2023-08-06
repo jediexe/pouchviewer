@@ -88,7 +88,7 @@ public class Pouchviewer {
 	}
 	
 	@SubscribeEvent
-	public void checkContainer(final GuiScreenEvent.DrawScreenEvent event) {
+	public void checkContainer(final GuiScreenEvent.DrawScreenEvent.Post event) {
 		if (event.gui instanceof GuiContainer) Agui = (GuiContainer)event.gui;
 		else Agui = null;
 		if (Agui!=null) {
@@ -281,37 +281,38 @@ public class Pouchviewer {
 				}
 			}
 	    }
-	    if (!Main.showDyed) drawText(pouchitem.getDisplayName() + " (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")", mx+11, my-11);
+	    if (!Main.showDyed) drawText(pouchitem.getDisplayName() + " (" + usedslots + "/" + LOTRItemPouch.getCapacity(pouchitem) + ")", mx+11, my-11);
 		else {
-			if (pouch.isPouchDyed(pouchitem)) drawText(pouchitem.getDisplayName() + " - " + I18n.format("item.lotr.pouch.dyed") + " (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")", mx+11, my-11);
-			else drawText(pouchitem.getDisplayName() + " (" + usedslots + "/" + pouch.getCapacity(pouchitem) + ")", mx+11, my-11);
+			if (LOTRItemPouch.isPouchDyed(pouchitem)) drawText(pouchitem.getDisplayName() + " - " + I18n.format("item.lotr.pouch.dyed") + " (" + usedslots + "/" + LOTRItemPouch.getCapacity(pouchitem) + ")", mx+11, my-11);
+			else drawText(pouchitem.getDisplayName() + " (" + usedslots + "/" + LOTRItemPouch.getCapacity(pouchitem) + ")", mx+11, my-11);
 		}
 	}
 	
 	public static void renderItem(final RenderItem ri, final FontRenderer fr, final TextureManager tm, final ItemStack item, final int x, final int y) {
 		RenderHelper.enableGUIStandardItemLighting();
+    	GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
 		Block block = null;
         if (item.getItem() instanceof ItemBlock) block = Block.getBlockFromItem(item.getItem());
-        if (block!=null && !block.isOpaqueCube() && block.hasTileEntity()){
+        if (block!=null && !block.isOpaqueCube() && block.hasTileEntity()) {
         	ri.renderItemAndEffectIntoGUI(fr, tm, item, x, y);
         	ri.renderItemOverlayIntoGUI(fr, tm, item, x, y);
     	}
         else {
-        	GL11.glDisable(2929);
+    		GL11.glDisable(2929);
         	ri.renderItemAndEffectIntoGUI(fr, tm, item, x, y);
             ri.renderItemOverlayIntoGUI(fr, tm, item, x, y);
             GL11.glEnable(2929);
         }
+        
         RenderHelper.disableStandardItemLighting();
     }
 	
 	public static void drawBackground(int x, int y, int a, int b, int aa, int bb) {
 		if (Main.usePouchColor) {
 			try {
-				int color = pouch.getPouchColor(pouchitem);
+				int color = LOTRItemPouch.getPouchColor(pouchitem);
 				String hex = ("#" + Integer.toHexString(color));
 				if (hex.length()!=6 && hex.startsWith("#ff")) hex = hex.replaceFirst("#ff", "#");
-				Color pouchcolor = Color.decode(hex);
 				float red = (float)Color.decode(hex).getRed();
 			    float green = (float)Color.decode(hex).getGreen();
 			    float blue = (float)Color.decode(hex).getBlue();

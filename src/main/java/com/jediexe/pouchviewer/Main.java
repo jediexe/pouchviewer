@@ -44,12 +44,6 @@ public class Main{
     public static boolean showDyed;
     public static boolean usePouchColor;
     public static String CATEGORY_VISUAL = Main.makeCategory("visual");
-    Property pshowEmptySlots = config.get(CATEGORY_VISUAL, "showEmptySlots", true, "Set to true use add gaps between items where an empty slot is in the pouch");
-	Property pshowOwned = config.get(CATEGORY_VISUAL, "showOwned", false, "Set to true to keep the 'Belonged to:' text in the tooltip");
-	Property pcomplicatedOwner = config.get(CATEGORY_VISUAL, "complicatedOwner", false, "Set to true to use the actual name of the previous owner in the visual tooltip (risk of text overflow)");
-	Property pshowDyed = config.get(CATEGORY_VISUAL, "showDyed", false, "Set to true to keep the 'Dyed' text in the tooltip");
-	Property pusePouchColor = config.get(CATEGORY_VISUAL, "usePouchColor", true, "Set to true to use the pouch color as the tooltip background color");
-    
     public static List<IConfigElement> getConfigElements() {
 		ArrayList<IConfigElement> list = new ArrayList<>();
 		for (ConfigCategory c : Categories) {
@@ -85,8 +79,8 @@ public class Main{
     
     @EventHandler
     public void init(FMLInitializationEvent event){
-    	MinecraftForge.EVENT_BUS.register(Pouchviewer.instance);
     	FMLCommonHandler.instance().bus().register(new ConfigChangedHandler());
+    	MinecraftForge.EVENT_BUS.register(Pouchviewer.instance);
     }
     
 }
