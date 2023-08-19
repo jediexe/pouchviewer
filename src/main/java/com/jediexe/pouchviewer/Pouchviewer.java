@@ -290,10 +290,10 @@ public class Pouchviewer {
 	
 	public static void renderItem(final RenderItem ri, final FontRenderer fr, final TextureManager tm, final ItemStack item, final int x, final int y) {
 		RenderHelper.enableGUIStandardItemLighting();
-    	GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
 		Block block = null;
         if (item.getItem() instanceof ItemBlock) block = Block.getBlockFromItem(item.getItem());
         if (block!=null && !block.isOpaqueCube() && block.hasTileEntity()) {
+        	GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
         	ri.renderItemAndEffectIntoGUI(fr, tm, item, x, y);
         	ri.renderItemOverlayIntoGUI(fr, tm, item, x, y);
     	}
@@ -308,22 +308,35 @@ public class Pouchviewer {
     }
 	
 	public static void drawBackground(int x, int y, int a, int b, int aa, int bb) {
+        RenderHelper.disableStandardItemLighting();
+        String hex = "#a56e4c";
 		if (Main.usePouchColor) {
+			int color = LOTRItemPouch.getPouchColor(pouchitem);
+			hex = ("#" + Integer.toHexString(color));
+			if (hex.length()>=6 && hex.startsWith("#ff")) hex = hex.replaceFirst("#ff", "#");
+			float red = (float)Color.decode(hex).getRed();
+		    float green = (float)Color.decode(hex).getGreen();
+		    float blue = (float)Color.decode(hex).getBlue();
+			GL11.glColor4f(red/255.0f, green/255.0f, blue/255.0f, 1.0f);
+		}
+		else {
 			try {
-				int color = LOTRItemPouch.getPouchColor(pouchitem);
-				String hex = ("#" + Integer.toHexString(color));
-				if (hex.length()!=6 && hex.startsWith("#ff")) hex = hex.replaceFirst("#ff", "#");
+				hex = Main.defaultBackgroundColor;
+				if (!hex.startsWith("#") && hex.length()==6) hex = "#" + hex;
 				float red = (float)Color.decode(hex).getRed();
 			    float green = (float)Color.decode(hex).getGreen();
 			    float blue = (float)Color.decode(hex).getBlue();
 				GL11.glColor4f(red/255.0f, green/255.0f, blue/255.0f, 1.0f);
 			}
-			catch (Exception e){
-				GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-				System.err.println(e);
+			catch (Exception e) {
+				hex = "#a56e4c";
+				float red = (float)Color.decode(hex).getRed();
+			    float green = (float)Color.decode(hex).getGreen();
+			    float blue = (float)Color.decode(hex).getBlue();
+				GL11.glColor4f(red/255.0f, green/255.0f, blue/255.0f, 1.0f);
 			}
 		}
-		else GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		
         Minecraft.getMinecraft().renderEngine.bindTexture(pouchtexture);
         Gui gui = new Gui();
         GL11.glDisable(2929);
@@ -332,6 +345,7 @@ public class Pouchviewer {
     }
 	
 	public static void drawText(String text, int x, int y) {
+		RenderHelper.disableStandardItemLighting();
         GL11.glDisable(2929);
         Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(text, x, y, 0xffffff);
         GL11.glEnable(2929);

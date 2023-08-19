@@ -22,7 +22,7 @@ public class Main{
 	
 	public static final String NAME = "LOTR Pouch Viewer";
     public static final String MODID = "pouchviewer";
-    public static final String VERSION = "2.4.2";
+    public static final String VERSION = "2.4.3";
     
     public static Configuration config = new Configuration(new File("config/lotrpouchviewer.cfg"));
     public static List<ConfigCategory> Categories;
@@ -43,6 +43,7 @@ public class Main{
     public static boolean complicatedOwner;
     public static boolean showDyed;
     public static boolean usePouchColor;
+    public static String defaultBackgroundColor;
     public static String CATEGORY_VISUAL = Main.makeCategory("visual");
     public static List<IConfigElement> getConfigElements() {
 		ArrayList<IConfigElement> list = new ArrayList<>();
@@ -54,16 +55,18 @@ public class Main{
 	}
     
     public static void load(Configuration config) {
-    	Property pshowEmptySlots = config.get(CATEGORY_VISUAL, "showEmptySlots", true, "Set to true use add gaps between items where an empty slot is in the pouch");
+    	Property pshowEmptySlots = config.get(CATEGORY_VISUAL, "showEmptySlots", true, "Set to true to add gaps between items where an empty slot is in the pouch (Enabled is default inventory behaviour)");
     	showEmptySlots = pshowEmptySlots.getBoolean();
-    	Property pshowOwned = config.get(CATEGORY_VISUAL, "showOwned", false, "Set to true to keep the 'Belonged to:' text in the tooltip");
+    	Property pshowOwned = config.get(CATEGORY_VISUAL, "showOwned", false, "Set to true to add the 'Belonged to:' text to the visual tooltip (risk of text overflow)");
     	showOwned = pshowOwned.getBoolean();
     	Property pcomplicatedOwner = config.get(CATEGORY_VISUAL, "complicatedOwner", false, "Set to true to use the actual name of the previous owner in the visual tooltip (risk of text overflow)");
     	complicatedOwner = pcomplicatedOwner.getBoolean();
-    	Property pshowDyed = config.get(CATEGORY_VISUAL, "showDyed", false, "Set to true to keep the 'Dyed' text in the tooltip");
+    	Property pshowDyed = config.get(CATEGORY_VISUAL, "showDyed", false, "Set to true to add the 'Dyed' text in the visual tooltip");
     	showDyed = pshowDyed.getBoolean();
     	Property pusePouchColor = config.get(CATEGORY_VISUAL, "usePouchColor", true, "Set to true to use the pouch color as the tooltip background color");
     	usePouchColor = pusePouchColor.getBoolean();
+    	Property pdefaultBackgroundColor = config.get(CATEGORY_VISUAL, "defaultBackgroundColor", "#a56e4c", "Hex color for the default pouch background color if not using use pouch color setting. Format like: #ffffff and the default (#a56e4c) will be used if the hex inputted is invalid");
+    	defaultBackgroundColor = pdefaultBackgroundColor.getString();
     	if (config.hasChanged()) config.save();
     }
     

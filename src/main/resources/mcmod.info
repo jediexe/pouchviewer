@@ -3,7 +3,7 @@
   "modid": "pouchviewer",
   "name": "LOTR Pouch Viewer",
   "description": "LOTR mod addon to view pouch contents on hover.",
-  "version": "2.4.2",
+  "version": "2.4.3",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
