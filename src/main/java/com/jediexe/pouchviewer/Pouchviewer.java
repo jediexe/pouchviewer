@@ -290,10 +290,10 @@ public class Pouchviewer {
 	
 	public static void renderItem(final RenderItem ri, final FontRenderer fr, final TextureManager tm, final ItemStack item, final int x, final int y) {
 		RenderHelper.enableGUIStandardItemLighting();
+		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
 		Block block = null;
         if (item.getItem() instanceof ItemBlock) block = Block.getBlockFromItem(item.getItem());
         if (block!=null && !block.isOpaqueCube() && block.hasTileEntity()) {
-        	GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
         	ri.renderItemAndEffectIntoGUI(fr, tm, item, x, y);
         	ri.renderItemOverlayIntoGUI(fr, tm, item, x, y);
     	}

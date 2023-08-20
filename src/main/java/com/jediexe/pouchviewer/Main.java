@@ -22,7 +22,7 @@ public class Main{
 	
 	public static final String NAME = "LOTR Pouch Viewer";
     public static final String MODID = "pouchviewer";
-    public static final String VERSION = "2.4.3";
+    public static final String VERSION = "2.4.4";
     
     public static Configuration config = new Configuration(new File("config/lotrpouchviewer.cfg"));
     public static List<ConfigCategory> Categories;
