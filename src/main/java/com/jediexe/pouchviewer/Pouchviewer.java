@@ -303,7 +303,6 @@ public class Pouchviewer {
             ri.renderItemOverlayIntoGUI(fr, tm, item, x, y);
             GL11.glEnable(2929);
         }
-        
         RenderHelper.disableStandardItemLighting();
     }
 	
@@ -342,6 +341,7 @@ public class Pouchviewer {
         GL11.glDisable(2929);
         gui.drawTexturedModalRect(x, y-1, a, b, aa, bb);
         GL11.glEnable(2929);
+	RenderHelper.enableStandardItemLighting();
     }
 	
 	public static void drawText(String text, int x, int y) {
@@ -349,5 +349,6 @@ public class Pouchviewer {
         GL11.glDisable(2929);
         Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(text, x, y, 0xffffff);
         GL11.glEnable(2929);
+	RenderHelper.enableStandardItemLighting();
 	}
 }
