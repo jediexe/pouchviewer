@@ -82,7 +82,7 @@ public class Pouchviewer {
 				}
 				event.toolTip.remove(event.toolTip.size()-1);
 				event.toolTip.add(" ");
-				event.toolTip.add("                                        ");
+				event.toolTip.add("                                         ");
 			}
 		}
 	}
@@ -115,8 +115,12 @@ public class Pouchviewer {
 	    int sh = sr.getScaledHeight();
 	    int mx = Mouse.getX() * sw / Minecraft.getMinecraft().displayWidth;
 	    int my = sh - Mouse.getY() * sh / Minecraft.getMinecraft().displayHeight;
-	    if (mx+172>sw) mx=mx-188;
+	    mx+=2;
+	    if (mx+174>sw) mx=mx-192;
 	    if (Main.showEmptySlots) {
+	    	if (my+66>sh && count==27) my=sh-66;
+		    if (my+48>sh && count==18) my=sh-48;
+		    if (my+30>sh && count==9) my=sh-30;
 			if (count==9) drawBackground(mx+11,my, 7, 97, 162, 18);
 			if (count==18) drawBackground(mx+11,my, 7, 97, 162, 36);
 			if (count==27) drawBackground(mx+11,my, 7, 97, 162, 54);
@@ -194,6 +198,9 @@ public class Pouchviewer {
 			}
 	    }
 	    else {
+	    	if (my+66>sh && usedslots>18) my=sh-66;
+		    if (my+48>sh && usedslots>9 && usedslots<=18) my=sh-48;
+		    if (my+30>sh && usedslots<=9) my=sh-30;
 			if (usedslots<=9) drawBackground(mx+11,my, 7, 97, 162, 18);
 			if (usedslots>9) drawBackground(mx+11,my, 7, 97, 162, 36);
 			if (usedslots>18) drawBackground(mx+11,my, 7, 97, 162, 54);
@@ -341,7 +348,7 @@ public class Pouchviewer {
         GL11.glDisable(2929);
         gui.drawTexturedModalRect(x, y-1, a, b, aa, bb);
         GL11.glEnable(2929);
-	RenderHelper.enableStandardItemLighting();
+        RenderHelper.enableStandardItemLighting();
     }
 	
 	public static void drawText(String text, int x, int y) {
@@ -349,6 +356,6 @@ public class Pouchviewer {
         GL11.glDisable(2929);
         Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(text, x, y, 0xffffff);
         GL11.glEnable(2929);
-	RenderHelper.enableStandardItemLighting();
+        RenderHelper.enableStandardItemLighting();
 	}
 }
