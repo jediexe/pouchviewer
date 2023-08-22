@@ -118,7 +118,7 @@ public class Pouchviewer {
 	    int my = sh - Mouse.getY() * sh / Minecraft.getMinecraft().displayHeight;
 	    my-=4;
 	    mx+=4;
-	    if (mx+176>sw) mx-=196;
+	    if (mx+184>sw) mx-=192;
 	    if (Main.showEmptySlots) {
 	    	if (my+66>sh && count==27) my=sh-66;
 		    if (my+48>sh && count==18) my=sh-48;
