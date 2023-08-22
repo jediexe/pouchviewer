@@ -82,7 +82,8 @@ public class Pouchviewer {
 				}
 				event.toolTip.remove(event.toolTip.size()-1);
 				event.toolTip.add(" ");
-				event.toolTip.add("                                         ");
+				event.toolTip.add("                                          ");
+				//event.toolTip.add("The Lord of the Rings Mod");
 			}
 		}
 	}
@@ -115,8 +116,9 @@ public class Pouchviewer {
 	    int sh = sr.getScaledHeight();
 	    int mx = Mouse.getX() * sw / Minecraft.getMinecraft().displayWidth;
 	    int my = sh - Mouse.getY() * sh / Minecraft.getMinecraft().displayHeight;
-	    mx+=2;
-	    if (mx+174>sw) mx=mx-192;
+	    my-=4;
+	    mx+=4;
+	    if (mx+176>sw) mx-=196;
 	    if (Main.showEmptySlots) {
 	    	if (my+66>sh && count==27) my=sh-66;
 		    if (my+48>sh && count==18) my=sh-48;
